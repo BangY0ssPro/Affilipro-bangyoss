@@ -14,7 +14,7 @@ window.AFFILIPRO_CONFIG = {
   // ── Apps Script Web App URL ──
   // Setelah deploy Apps Script, paste URL-nya di sini
   // Contoh: https://script.google.com/macros/s/AKfycb.../exec
-  appscriptUrl: "https://script.google.com/macros/s/AKfycbzXoXOnnwzFyzzseFjOCtKF3VtJYyW3k8WAy4vQ1T-Ve0Vsgv59FCnJR901kPoTAOrgzw/exec",
+  appscriptUrl: "https://script.google.com/macros/s/AKfycbw42wUGkAzjzYal5HR_s4mgeAPuFt0BA8EqLaQJ3fOFmS50SS_RHXs9N2N1OlKblv0jdw/exec",
 
   // ── Vercel Proxy Base URL ──
   // Setelah deploy ke Vercel, paste domain-nya di sini
