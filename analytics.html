@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AffiliPRO_BANGYOSS – Analytics</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg:#07090f;--bg2:#0d1120;--card:#111827;--card2:#151e2e;
+  --accent:#00b87a;--accentDim:rgba(0,184,122,.13);--accentGlow:0 0 22px rgba(0,184,122,.45);
+  --amber:#f59e0b;--red:#ef4444;--text:#e2e8f0;--muted:#5a7082;
+  --border:rgba(255,255,255,.07);--font:'Sora',sans-serif;--radius:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font);background:var(--bg);color:var(--text);display:flex;overflow-x:hidden}
+
+/* ===== ICON-ONLY SIDEBAR ===== */
+.sidebar{
+  width:56px;background:var(--bg2);border-right:1px solid var(--border);
+  position:fixed;top:0;left:0;height:100vh;z-index:200;
+  display:flex;flex-direction:column;align-items:center;
+  padding:12px 0;gap:4px;
+}
+.s-logo{
+  width:34px;height:34px;background:var(--accent);border-radius:9px;
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;
+  color:#000;box-shadow:var(--accentGlow);margin-bottom:10px;
+  text-decoration:none;flex-shrink:0;
+}
+.s-icon{
+  width:40px;height:40px;border-radius:10px;display:flex;align-items:center;
+  justify-content:center;cursor:pointer;color:var(--muted);transition:.2s;
+  text-decoration:none;position:relative;
+}
+.s-icon:hover,.s-icon.active{background:var(--accentDim);color:var(--accent)}
+.s-icon svg{width:17px;height:17px}
+/* Tooltip */
+.s-icon::after{
+  content:attr(data-tip);position:absolute;left:52px;top:50%;transform:translateY(-50%);
+  background:var(--card2);color:var(--text);font-size:11px;font-weight:600;
+  padding:5px 10px;border-radius:7px;white-space:nowrap;pointer-events:none;
+  opacity:0;transition:opacity .15s;border:1px solid var(--border);
+}
+.s-icon:hover::after{opacity:1}
+/* Back button */
+.back-btn{
+  display:flex;align-items:center;gap:8px;padding:7px 14px;
+  background:var(--card);border:1px solid var(--border);border-radius:9px;
+  color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;
+  text-decoration:none;transition:.2s;width:fit-content;
+}
+.back-btn:hover{border-color:var(--accent);color:var(--accent)}
+.back-btn svg{width:14px;height:14px}
+
+/* ===== MAIN ===== */
+.main{margin-left:56px;flex:1;padding:24px;max-width:calc(100vw - 56px)}
+.page-head{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:22px;flex-wrap:wrap;gap:12px;
+}
+.page-title{
+  font-size:22px;font-weight:800;
+  background:linear-gradient(90deg,#fff,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+/* Filter tabs */
+.tab-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tab-btn{
+  padding:7px 16px;border-radius:8px;border:1px solid var(--border);background:var(--card2);
+  color:var(--muted);font-family:var(--font);font-size:12px;font-weight:600;
+  cursor:pointer;transition:.2s;position:relative;
+}
+.tab-btn:hover,.tab-btn.active{border-color:var(--accent);color:var(--accent);background:var(--accentDim)}
+/* Dropdown */
+.dd-wrap{position:relative}
+.dd-panel{
+  position:absolute;top:calc(100%+6px);left:0;min-width:200px;background:var(--card2);
+  border:1px solid var(--border);border-radius:10px;display:none;z-index:300;
+  box-shadow:0 16px 48px rgba(0,0,0,.5);overflow:hidden;
+}
+.dd-panel.open{display:block}
+.dd-section{padding:6px 0}
+.dd-head{padding:7px 14px;font-size:10.5px;font-weight:700;color:var(--accent);
+  text-transform:uppercase;letter-spacing:.06em}
+.dd-item{
+  padding:7px 14px 7px 22px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:8px;
+  transition:background .15s;color:var(--muted);
+}
+.dd-item:hover,.dd-item.sel{background:var(--accentDim);color:var(--accent)}
+.dd-sep{height:1px;background:var(--border);margin:4px 0}
+
+/* Charts Grid */
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.ccard{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+.ccard-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px}
+.ccard-title{font-size:13.5px;font-weight:700}
+.legend{display:flex;gap:14px;margin-top:6px}
+.leg{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
+.leg-dot{width:7px;height:7px;border-radius:50%}
+
+/* Stat mini cards under charts */
+.mini-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.mini-card{
+  background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;
+  display:flex;align-items:center;gap:10px;
+}
+.mini-ico{
+  width:32px;height:32px;border-radius:8px;background:var(--accentDim);
+  display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:15px;flex-shrink:0;
+}
+.mini-label{font-size:10.5px;color:var(--muted);margin-bottom:3px}
+.mini-val{font-size:17px;font-weight:800;line-height:1}
+
+/* Bottom table */
+.bot-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:20px;overflow-x:auto}
+.bot-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+.bot-title{font-size:13.5px;font-weight:700}
+table{width:100%;border-collapse:collapse;font-size:12px;min-width:600px}
+thead tr{border-bottom:1px solid var(--border)}
+th{padding:8px 12px;text-align:left;font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+td{padding:9px 12px;color:var(--text);border-bottom:1px solid rgba(255,255,255,.04)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--accentDim)}
+.plat-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:600}
+.num-green{color:var(--accent);font-weight:700}
+.num-amber{color:var(--amber);font-weight:700}
+.num-red{color:var(--red);font-weight:700}
+/* Scrollbar */
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--card2);border-radius:3px}
+</style>
+</head>
+<body>
+
+<!-- ICON SIDEBAR -->
+<aside class="sidebar">
+  <a href="dashboard.html" class="s-logo" title="AffiliPRO">AP</a>
+  <a href="dashboard.html" class="s-icon" data-tip="Dashboard">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/>
+      <rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>
+    </svg>
+  </a>
+  <a href="analytics.html" class="s-icon active" data-tip="Analytics">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+    </svg>
+  </a>
+  <a href="products.html" class="s-icon" data-tip="Produk">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+      <line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
+    </svg>
+  </a>
+  <a href="raport.html" class="s-icon" data-tip="Raport">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+      <polyline points="14 2 14 8 20 8"/>
+      <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+    </svg>
+  </a>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- Header -->
+  <div class="page-head">
+    <div>
+      <a href="dashboard.html" class="back-btn" style="margin-bottom:10px;display:inline-flex">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        Kembali ke Dashboard
+      </a>
+      <div class="page-title">Acquisition Analysis</div>
+    </div>
+    <div class="tab-row">
+      <!-- ALL -->
+      <button class="tab-btn active" onclick="filterAll(this)">All</button>
+      <!-- Kategori -->
+      <div class="dd-wrap">
+        <button class="tab-btn" onclick="toggleDd('catDd',this)">Kategori ▾</button>
+        <div class="dd-panel" id="catDd">
+          <div class="dd-section">
+            <div class="dd-head">Fashion</div>
+            <div class="dd-item" onclick="filterKat('Fashion','Sepatu')">Sepatu</div>
+            <div class="dd-item" onclick="filterKat('Fashion','Parfum')">Parfum</div>
+            <div class="dd-item" onclick="filterKat('Fashion','Baju')">Baju</div>
+            <div class="dd-item" onclick="filterKat('Fashion','Tas')">Tas</div>
+          </div>
+          <div class="dd-sep"></div>
+          <div class="dd-section">
+            <div class="dd-head">Elektronik</div>
+            <div class="dd-item" onclick="filterKat('Elektronik','Flashdisk')">Flashdisk</div>
+            <div class="dd-item" onclick="filterKat('Elektronik','Mouse')">Mouse</div>
+            <div class="dd-item" onclick="filterKat('Elektronik','Headphone')">Headphone</div>
+            <div class="dd-item" onclick="filterKat('Elektronik','Powerbank')">Powerbank</div>
+          </div>
+          <div class="dd-sep"></div>
+          <div class="dd-section">
+            <div class="dd-head">Kecantikan</div>
+            <div class="dd-item" onclick="filterKat('Kecantikan','Serum')">Serum</div>
+          </div>
+        </div>
+      </div>
+      <!-- Sosial Media -->
+      <div class="dd-wrap">
+        <button class="tab-btn" onclick="toggleDd('socDd',this)">Sosial Media ▾</button>
+        <div class="dd-panel" id="socDd">
+          <div class="dd-item" onclick="filterSoc('youtube')">🎥 YouTube</div>
+          <div class="dd-item" onclick="filterSoc('facebook')">📘 Facebook</div>
+          <div class="dd-item" onclick="filterSoc('instagram')">📸 Instagram</div>
+          <div class="dd-item" onclick="filterSoc('tiktok')">🎵 TikTok</div>
+          <div class="dd-item" onclick="filterSoc('threads')">🧵 Threads</div>
+          <div class="dd-item" onclick="filterSoc('x')">𝕏 X (Twitter)</div>
+          <div class="dd-item" onclick="filterSoc('shopee')">🛒 Shopee</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="charts-grid">
+    <!-- Line Chart -->
+    <div class="ccard">
+      <div class="ccard-head">
+        <div>
+          <div class="ccard-title">Penjualan & CVR</div>
+          <div class="legend">
+            <div class="leg"><div class="leg-dot" style="background:var(--accent)"></div>Penjualan</div>
+            <div class="leg"><div class="leg-dot" style="background:var(--amber)"></div>CVR (%)</div>
+          </div>
+        </div>
+        <div id="filterLabel" style="font-size:11px;color:var(--accent);font-weight:600">Semua Data</div>
+      </div>
+      <canvas id="lineChart" height="190"></canvas>
+      <!-- Mini stats under line chart -->
+      <div class="mini-row">
+        <div class="mini-card">
+          <div class="mini-ico">💰</div>
+          <div>
+            <div class="mini-label">Total Penjualan</div>
+            <div class="mini-val num-green" id="mJual">—</div>
+          </div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-ico">📈</div>
+          <div>
+            <div class="mini-label">Rata-rata CVR</div>
+            <div class="mini-val num-amber" id="mCvr">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Donut Chart -->
+    <div class="ccard">
+      <div class="ccard-head">
+        <div>
+          <div class="ccard-title">Klik per Platform</div>
+          <div class="legend" id="donutLegend"></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:20px">
+        <div style="width:160px;height:160px"><canvas id="donutChart"></canvas></div>
+      </div>
+      <div class="mini-row">
+        <div class="mini-card">
+          <div class="mini-ico">👆</div>
+          <div>
+            <div class="mini-label">Total Klik</div>
+            <div class="mini-val num-green" id="mKlik">—</div>
+          </div>
+        </div>
+        <div class="mini-card">
+          <div class="mini-ico">🛒</div>
+          <div>
+            <div class="mini-label">Total Penjualan</div>
+            <div class="mini-val num-amber" id="mJual2">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Table -->
+  <div class="bot-card">
+    <div class="bot-head">
+      <div class="bot-title">📊 Rekap Per Platform & Produk</div>
+      <div style="font-size:11px;color:var(--muted)" id="tableLabel">Menampilkan semua data</div>
+    </div>
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>Sosial Media</th>
+          <th>Kategori</th>
+          <th>Produk</th>
+          <th>Klik</th>
+          <th>Penjualan</th>
+          <th>CVR</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted)">Memuat data…</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+const API_URL = 'https://script.google.com/macros/s/GANTI_DENGAN_ID_SCRIPT_ANDA/exec';
+
+// ===== MOCK DATA =====
+const MOCK_PROD = [
+  {PRODUK:'Sepatu Running',KATEGORI:'Fashion',PLATFORM:'shopee',TERJUAL:1284,KLIK:8432,CVR:15.2},
+  {PRODUK:'Parfum Framinton',KATEGORI:'Fashion',PLATFORM:'shopee',TERJUAL:956,KLIK:6230,CVR:15.3},
+  {PRODUK:'Flashdisk 64GB',KATEGORI:'Elektronik',PLATFORM:'shopee',TERJUAL:2100,KLIK:12400,CVR:16.9},
+  {PRODUK:'Baju Casual',KATEGORI:'Fashion',PLATFORM:'shopee',TERJUAL:780,KLIK:4500,CVR:17.3},
+  {PRODUK:'Mouse Wireless',KATEGORI:'Elektronik',PLATFORM:'shopee',TERJUAL:650,KLIK:3800,CVR:17.1},
+  {PRODUK:'Serum Vitamin C',KATEGORI:'Kecantikan',PLATFORM:'shopee',TERJUAL:430,KLIK:2900,CVR:14.8},
+  {PRODUK:'Headphone BT',KATEGORI:'Elektronik',PLATFORM:'shopee',TERJUAL:320,KLIK:1900,CVR:16.8},
+  {PRODUK:'Tas Ransel',KATEGORI:'Fashion',PLATFORM:'shopee',TERJUAL:890,KLIK:5200,CVR:17.1},
+  {PRODUK:'Powerbank 20000',KATEGORI:'Elektronik',PLATFORM:'shopee',TERJUAL:560,KLIK:3200,CVR:17.5},
+];
+const MOCK_SOC = [
+  {PLATFORM:'youtube',KLIK:3200,PENJUALAN:150},
+  {PLATFORM:'facebook',KLIK:5400,PENJUALAN:280},
+  {PLATFORM:'instagram',KLIK:7800,PENJUALAN:420},
+  {PLATFORM:'tiktok',KLIK:12500,PENJUALAN:680},
+  {PLATFORM:'threads',KLIK:900,PENJUALAN:40},
+  {PLATFORM:'x',KLIK:2100,PENJUALAN:90},
+  {PLATFORM:'shopee',KLIK:8900,PENJUALAN:540},
+];
+const SOC_CFG = {
+  youtube:{emoji:'🎥',color:'#ff4444'},facebook:{emoji:'📘',color:'#1877f2'},
+  instagram:{emoji:'📸',color:'#e1306c'},tiktok:{emoji:'🎵',color:'#69c9d0'},
+  threads:{emoji:'🧵',color:'#aaa'},x:{emoji:'𝕏',color:'#ddd'},shopee:{emoji:'🛒',color:'#f26522'},
+};
+const SOC_COLORS = ['#00b87a','#f59e0b','#3b82f6','#8b5cf6','#ec4899','#14b8a6','#f97316'];
+
+let prodData=[], socData=[], lineChart=null, donutChart=null;
+let curFilter={type:'all',kat:null,prod:null,soc:null};
+
+async function fetchSheet(name) {
+  try {
+    const r = await fetch(`${API_URL}?sheet=${encodeURIComponent(name)}`);
+    return await r.json();
+  } catch { return null; }
+}
+
+async function init() {
+  const [p, s] = await Promise.all([fetchSheet('ANALISA'), fetchSheet('SOSIAL KLIK')]);
+  prodData = p || MOCK_PROD;
+  socData  = s || MOCK_SOC;
+  renderAll();
+}
+
+function renderAll() {
+  let fp = prodData, fs = socData;
+  if (curFilter.type === 'kat' && curFilter.kat) {
+    fp = prodData.filter(d => d.KATEGORI && d.KATEGORI.toLowerCase().includes(curFilter.kat.toLowerCase()));
+    if (curFilter.prod) fp = fp.filter(d => d.PRODUK && d.PRODUK.toLowerCase().includes(curFilter.prod.toLowerCase()));
+  }
+  if (curFilter.type === 'soc' && curFilter.soc) {
+    fs = socData.filter(d => (d.PLATFORM||'').toLowerCase() === curFilter.soc);
+    fp = prodData.filter(d => (d.PLATFORM||'').toLowerCase() === curFilter.soc);
+  }
+  renderLine(fp);
+  renderDonut(fs);
+  renderTable(fp, fs);
+}
+
+// Line Chart: Penjualan & CVR per produk
+function renderLine(fp) {
+  const labels = fp.slice(0,10).map(d=>d.PRODUK||'?');
+  const jual   = fp.slice(0,10).map(d=>+d.TERJUAL||+d.PENJUALAN||0);
+  const cvr    = fp.slice(0,10).map(d=>+d.CVR||0);
+  const totJ   = jual.reduce((a,b)=>a+b,0);
+  const avgC   = cvr.length ? (cvr.reduce((a,b)=>a+b,0)/cvr.length).toFixed(1) : 0;
+  document.getElementById('mJual').textContent = fmt(totJ);
+  document.getElementById('mCvr').textContent  = avgC + '%';
+
+  const ctx = document.getElementById('lineChart').getContext('2d');
+  if (lineChart) lineChart.destroy();
+  lineChart = new Chart(ctx, {
+    type:'line',
+    data:{
+      labels,
+      datasets:[
+        {label:'Penjualan',data:jual,borderColor:'#00b87a',backgroundColor:'rgba(0,184,122,.07)',
+         fill:true,tension:.38,borderWidth:2,pointRadius:4,pointBackgroundColor:'#00b87a'},
+        {label:'CVR (%)',data:cvr,borderColor:'#f59e0b',backgroundColor:'rgba(245,158,11,.05)',
+         fill:true,tension:.38,borderWidth:2,pointRadius:4,pointBackgroundColor:'#f59e0b',yAxisID:'y2'}
+      ]
+    },
+    options:{
+      responsive:true,plugins:{legend:{display:false},
+        tooltip:{backgroundColor:'#111827',titleColor:'#e2e8f0',bodyColor:'#5a7082',borderColor:'rgba(0,184,122,.3)',borderWidth:1}},
+      scales:{
+        x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#5a7082',font:{family:'Sora',size:9},maxRotation:30}},
+        y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#5a7082',font:{family:'Sora',size:10}}},
+        y2:{position:'right',grid:{display:false},ticks:{color:'#f59e0b',font:{family:'Sora',size:10}}}
+      }
+    }
+  });
+}
+
+// Donut Chart: Klik per platform
+function renderDonut(fs) {
+  const labels = fs.map(d=>(d.PLATFORM||'?').toUpperCase());
+  const klikArr = fs.map(d=>+d.KLIK||0);
+  const jualArr = fs.map(d=>+d.PENJUALAN||0);
+  const totK = klikArr.reduce((a,b)=>a+b,0);
+  const totJ = jualArr.reduce((a,b)=>a+b,0);
+  document.getElementById('mKlik').textContent  = fmt(totK);
+  document.getElementById('mJual2').textContent = fmt(totJ);
+
+  // Legend
+  document.getElementById('donutLegend').innerHTML = fs.slice(0,4).map((d,i)=>`
+    <div class="leg"><div class="leg-dot" style="background:${SOC_COLORS[i%SOC_COLORS.length]}"></div>
+    ${(d.PLATFORM||'?').toUpperCase()}</div>`).join('');
+
+  const ctx = document.getElementById('donutChart').getContext('2d');
+  if (donutChart) donutChart.destroy();
+  donutChart = new Chart(ctx,{
+    type:'doughnut',
+    data:{
+      labels,
+      datasets:[{data:klikArr,backgroundColor:SOC_COLORS,borderWidth:0,hoverBorderWidth:0}]
+    },
+    options:{
+      cutout:'65%',responsive:true,
+      plugins:{
+        legend:{display:false},
+        tooltip:{backgroundColor:'#111827',bodyColor:'#e2e8f0',borderColor:'rgba(0,184,122,.3)',borderWidth:1,
+          callbacks:{label:ctx=>`${ctx.label}: ${fmt(ctx.raw)} klik`}}
+      }
+    }
+  });
+}
+
+// Table
+function renderTable(fp, fs) {
+  const plats = ['youtube','facebook','instagram','tiktok','threads','x','shopee'];
+  const socMap = {};
+  fs.forEach(d => { socMap[(d.PLATFORM||'').toLowerCase()] = d; });
+
+  let rows = '';
+  plats.forEach(plat => {
+    const sd = socMap[plat];
+    if (!sd) return;
+    const cfg = SOC_CFG[plat];
+    const platProds = fp.filter(d => (d.PLATFORM||'').toLowerCase() === plat || curFilter.type === 'all');
+    // Show one row per platform with totals
+    const totK = +sd.KLIK||0;
+    const totJ = +sd.PENJUALAN||0;
+    const cvr  = totK > 0 ? ((totJ/totK)*100).toFixed(1) : 0;
+    rows += `
+      <tr>
+        <td><span class="plat-badge" style="background:rgba(255,255,255,.06)">${cfg.emoji} ${plat==='x'?'X':plat.charAt(0).toUpperCase()+plat.slice(1)}</span></td>
+        <td style="color:var(--muted)">—</td>
+        <td style="color:var(--muted)">Semua Produk</td>
+        <td class="num-green">${fmt(totK)}</td>
+        <td class="num-amber">${fmt(totJ)}</td>
+        <td class="${+cvr>=15?'num-green':'num-red'}">${cvr}%</td>
+      </tr>`;
+  });
+  if (!rows) rows = `<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted)">Tidak ada data.</td></tr>`;
+  document.getElementById('tableBody').innerHTML = rows;
+  document.getElementById('tableLabel').textContent =
+    curFilter.type==='all' ? 'Menampilkan semua data' :
+    curFilter.type==='soc' ? `Filter: ${curFilter.soc}` :
+    `Filter: ${curFilter.kat}${curFilter.prod?' – '+curFilter.prod:''}`;
+}
+
+// Filters
+function filterAll(btn) {
+  curFilter = {type:'all'};
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('filterLabel').textContent = 'Semua Data';
+  renderAll(); closeAllDd();
+}
+function filterKat(kat, prod) {
+  curFilter = {type:'kat',kat,prod};
+  document.getElementById('filterLabel').textContent = kat + (prod?' – '+prod:'');
+  renderAll(); closeAllDd();
+}
+function filterSoc(soc) {
+  curFilter = {type:'soc',soc};
+  document.getElementById('filterLabel').textContent = soc.toUpperCase();
+  renderAll(); closeAllDd();
+}
+
+function toggleDd(id, btn) {
+  const all = document.querySelectorAll('.dd-panel');
+  all.forEach(d => { if (d.id !== id) d.classList.remove('open'); });
+  document.getElementById(id).classList.toggle('open');
+  event.stopPropagation();
+}
+function closeAllDd() {
+  document.querySelectorAll('.dd-panel').forEach(d=>d.classList.remove('open'));
+}
+
+function fmt(n) {
+  n=+n; if(isNaN(n)) return '—';
+  if(n>=1e6) return (n/1e6).toFixed(1)+'M';
+  if(n>=1e3) return (n/1e3).toFixed(1)+'K';
+  return n.toLocaleString('id-ID');
+}
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.dd-wrap')) closeAllDd();
+});
+
+init();
+</script>
+</body>
+</html>

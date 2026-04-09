@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AffiliPRO_BANGYOSS – Produk</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07090f;--bg2:#0d1120;--card:#111827;--card2:#151e2e;
+  --accent:#00b87a;--accentDim:rgba(0,184,122,.13);--accentGlow:0 0 22px rgba(0,184,122,.45);
+  --amber:#f59e0b;--text:#e2e8f0;--muted:#5a7082;
+  --border:rgba(255,255,255,.07);--font:'Sora',sans-serif;--radius:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font);background:var(--bg);color:var(--text);display:flex;min-height:100vh}
+
+/* ===== ICON SIDEBAR ===== */
+.sidebar{
+  width:56px;background:var(--bg2);border-right:1px solid var(--border);
+  position:fixed;top:0;left:0;height:100vh;z-index:200;
+  display:flex;flex-direction:column;align-items:center;padding:12px 0;gap:4px;
+}
+.s-logo{
+  width:34px;height:34px;background:var(--accent);border-radius:9px;
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;
+  color:#000;box-shadow:var(--accentGlow);margin-bottom:10px;text-decoration:none;flex-shrink:0;
+}
+.s-icon{
+  width:40px;height:40px;border-radius:10px;display:flex;align-items:center;
+  justify-content:center;cursor:pointer;color:var(--muted);transition:.2s;text-decoration:none;position:relative;
+}
+.s-icon:hover,.s-icon.active{background:var(--accentDim);color:var(--accent)}
+.s-icon svg{width:17px;height:17px}
+.s-icon::after{
+  content:attr(data-tip);position:absolute;left:52px;top:50%;transform:translateY(-50%);
+  background:var(--card2);color:var(--text);font-size:11px;font-weight:600;
+  padding:5px 10px;border-radius:7px;white-space:nowrap;pointer-events:none;
+  opacity:0;transition:opacity .15s;border:1px solid var(--border);z-index:999;
+}
+.s-icon:hover::after{opacity:1}
+.back-btn{
+  display:inline-flex;align-items:center;gap:7px;padding:7px 14px;
+  background:var(--card);border:1px solid var(--border);border-radius:9px;
+  color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;
+  text-decoration:none;transition:.2s;margin-bottom:10px;
+}
+.back-btn:hover{border-color:var(--accent);color:var(--accent)}
+.back-btn svg{width:13px;height:13px}
+
+/* ===== MAIN ===== */
+.main{margin-left:56px;flex:1;padding:22px;max-width:calc(100vw - 56px)}
+.page-title{
+  font-size:22px;font-weight:800;margin-bottom:18px;
+  background:linear-gradient(90deg,#fff,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+
+/* Search bar */
+.search-wrap{position:relative;margin-bottom:20px}
+.search-inner{
+  display:flex;align-items:center;gap:10px;background:var(--card);
+  border:1px solid var(--border);border-radius:12px;padding:10px 16px;
+  max-width:480px;transition:.2s;
+}
+.search-inner:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accentDim)}
+.search-inner svg{width:16px;height:16px;color:var(--muted);flex-shrink:0}
+.search-inner input{
+  background:none;border:none;outline:none;color:var(--text);
+  font-family:var(--font);font-size:13px;width:100%;
+}
+.search-inner input::placeholder{color:var(--muted)}
+
+/* Category nav */
+.cat-nav{
+  display:flex;flex-direction:column;align-items:center;
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:16px;margin-bottom:22px;
+}
+.cat-title{
+  font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;
+  letter-spacing:.07em;margin-bottom:14px;
+}
+.cat-main-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:10px}
+.cat-btn{
+  padding:7px 18px;border-radius:8px;border:1px solid var(--border);background:var(--card2);
+  color:var(--muted);font-family:var(--font);font-size:12px;font-weight:600;
+  cursor:pointer;transition:.2s;
+}
+.cat-btn:hover,.cat-btn.active{
+  border-color:var(--accent);color:var(--accent);background:var(--accentDim);
+  box-shadow:0 0 12px rgba(0,184,122,.18);
+}
+.sub-row{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;min-height:32px}
+.sub-btn{
+  padding:5px 14px;border-radius:7px;border:1px solid var(--border);background:transparent;
+  color:var(--muted);font-family:var(--font);font-size:11.5px;font-weight:500;cursor:pointer;transition:.2s;
+}
+.sub-btn:hover,.sub-btn.active{border-color:var(--accent);color:var(--accent);background:var(--accentDim)}
+
+/* Products grid — 5 columns */
+.prod-grid{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:24px;
+}
+@media(max-width:1200px){.prod-grid{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:900px){.prod-grid{grid-template-columns:repeat(3,1fr)}}
+
+.prod-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:16px;cursor:pointer;transition:.25s;position:relative;overflow:hidden;
+}
+.prod-card:hover{
+  border-color:var(--accent);
+  box-shadow:0 0 24px rgba(0,184,122,.15),0 8px 24px rgba(0,0,0,.3);
+  transform:translateY(-2px);
+}
+.prod-card::after{
+  content:'';position:absolute;top:0;right:0;width:60px;height:60px;
+  background:radial-gradient(circle,var(--accentDim) 0%,transparent 70%);pointer-events:none;
+}
+.prod-img{
+  width:100%;aspect-ratio:1;border-radius:10px;background:var(--card2);
+  display:flex;align-items:center;justify-content:center;font-size:36px;
+  margin-bottom:12px;overflow:hidden;
+}
+.prod-img img{width:100%;height:100%;object-fit:cover;border-radius:10px}
+.prod-name{font-size:12.5px;font-weight:700;margin-bottom:6px;line-height:1.35}
+.prod-harga{font-size:13px;font-weight:800;color:var(--accent);margin-bottom:6px}
+.prod-rating{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--amber);margin-bottom:8px}
+.prod-rating span{color:var(--muted)}
+.prod-link{
+  display:block;width:100%;padding:7px;border-radius:8px;border:none;
+  background:var(--accentDim);color:var(--accent);font-family:var(--font);
+  font-size:11.5px;font-weight:700;cursor:pointer;transition:.2s;text-align:center;text-decoration:none;
+}
+.prod-link:hover{background:var(--accent);color:#000;box-shadow:var(--accentGlow)}
+.prod-badge{
+  position:absolute;top:10px;left:10px;padding:3px 8px;border-radius:6px;
+  font-size:9.5px;font-weight:700;
+}
+.badge-naik{background:rgba(0,184,122,.2);color:var(--accent)}
+.badge-turun{background:rgba(239,68,68,.2);color:#ef4444}
+.badge-stabil{background:rgba(245,158,11,.2);color:var(--amber)}
+
+/* Pagination */
+.pagination{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:20px}
+.page-btn{
+  width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:var(--card2);
+  color:var(--muted);font-family:var(--font);font-size:12px;font-weight:700;cursor:pointer;transition:.2s;
+}
+.page-btn:hover,.page-btn.active{border-color:var(--accent);color:var(--accent);background:var(--accentDim)}
+.page-btn.active{box-shadow:var(--accentGlow)}
+.page-dots{color:var(--muted);font-size:14px;padding:0 4px}
+
+/* Empty state */
+.empty{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:60px;color:var(--muted);font-size:13px;gap:10px;
+}
+.empty span{font-size:40px}
+
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--card2);border-radius:3px}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <a href="dashboard.html" class="s-logo">AP</a>
+  <a href="dashboard.html" class="s-icon" data-tip="Dashboard">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/>
+      <rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>
+    </svg>
+  </a>
+  <a href="analytics.html" class="s-icon" data-tip="Analytics">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+    </svg>
+  </a>
+  <a href="products.html" class="s-icon active" data-tip="Produk">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+      <line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
+    </svg>
+  </a>
+  <a href="raport.html" class="s-icon" data-tip="Raport">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+      <polyline points="14 2 14 8 20 8"/>
+      <line x1="16" y1="13" x2="8" y2="13"/>
+    </svg>
+  </a>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <a href="dashboard.html" class="back-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+    Kembali
+  </a>
+  <div class="page-title">Katalog Produk</div>
+
+  <!-- Search -->
+  <div class="search-wrap">
+    <div class="search-inner">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input id="searchInput" type="text" placeholder="Cari produk berdasarkan nama atau kategori…" oninput="onSearch()">
+    </div>
+  </div>
+
+  <!-- Category Nav -->
+  <div class="cat-nav">
+    <div class="cat-title">KATEGORI</div>
+    <div class="cat-main-row" id="catMain"></div>
+    <div class="sub-row" id="catSub"></div>
+  </div>
+
+  <!-- Count info -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+    <div style="font-size:12px;color:var(--muted)" id="prodCount">Memuat produk…</div>
+    <div style="font-size:12px;color:var(--accent);font-weight:600" id="activeFilter"></div>
+  </div>
+
+  <!-- Grid -->
+  <div class="prod-grid" id="prodGrid"></div>
+
+  <!-- Pagination -->
+  <div class="pagination" id="pagination"></div>
+</div>
+
+<script>
+const API_URL = 'https://script.google.com/macros/s/GANTI_DENGAN_ID_SCRIPT_ANDA/exec';
+
+/* ===== MOCK DATA ===== */
+const MOCK = [
+  {ID:'P001',KATEGORI:'Fashion',PRODUK:'Sepatu Running Pro',HARGA:289000,TERJUAL:1284,KLIK:8432,CVR:15.2,STATUS:'Naik',image_url:'',AFFILIATE_link:'#',DESKRIPSI:'Sepatu olahraga premium'},
+  {ID:'P002',KATEGORI:'Fashion',PRODUK:'Parfum Framinton Premium',HARGA:245000,TERJUAL:956,KLIK:6230,CVR:15.3,STATUS:'Naik',image_url:'',AFFILIATE_link:'#',DESKRIPSI:'Parfum tahan lama'},
+  {ID:'P003',KATEGORI:'Elektronik',PRODUK:'Flashdisk 64GB USB 3.0',HARGA:89000,TERJUAL:2100,KLIK:12400,CVR:16.9,STATUS:'Naik',image_url:'',AFFILIATE_link:'#',DESKRIPSI:'Kecepatan baca tulis tinggi'},
+  {ID:'P004',KATEGORI:'Fashion',PRODUK:'Baju Casual Cotton Premium',HARGA:150000,TERJUAL:780,KLIK:4500,CVR:17.3,STATUS:'Stabil',image_url:'',AFFILIATE_link:'#',DESKRIPSI:'Bahan katun 100%'},
+  {ID:'P005',KATEGORI:'Elektronik',PRODUK:'Mouse Wireless Ergonomic',HARGA:120000,TERJUAL:650,KLIK:3800,CVR:17.1,STATUS:'Naik',image_url:'',AFFILIATE_link:'#',DESKRIPSI:'DPI adjustable'},
+  {ID:'P006',KATEGORI:'Kecantikan',PRODUK:'Serum Vitamin C Brightening',HARGA:175000,TERJUAL:430,KLIK:2900,CVR:14.8,STATUS:'Turun',image_url:'',AFFILIATE_link:'#',DESKRIPSI:'Mencerahkan kulit'},
+  {ID:'P007',KATEGORI:'Elektronik',PRODUK:'Headphone Bluetooth ANC',HARGA:350000,TERJUAL:320,KLIK:1900,CVR:16.8,STATUS:'Naik',image_url:'',AFFILIATE_link:'#',DESKRIPSI:'Active noise cancelling'},
+  {ID:'P008',KATEGORI:'Rumah',PRODUK:'Rak Buku Kayu Modern',HARGA:450000,TERJUAL:210,KLIK:1500,CVR:14.0,STATUS:'Stabil',image_url:'',AFFILIATE_link:'#',DESKRIPSI:'Desain minimalis'},
+  {ID:'P009',KATEGORI:'Fashion',PRODUK:'Tas Ransel Kanvas 30L',HARGA:199000,TERJUAL:890,KLIK:5200,CVR:17.1,STATUS:'Naik',image_url:'',AFFILIATE_link:'#',DESKRIPSI:'Kapasitas besar anti air'},
+  {ID:'P010',KATEGORI:'Elektronik',PRODUK:'Powerbank 20000mAh Fast',HARGA:280000,TERJUAL:560,KLIK:3200,CVR:17.5,STATUS:'Naik',image_url:'',AFFILIATE_link:'#',DESKRIPSI:'65W fast charging'},
+  {ID:'P011',KATEGORI:'Fashion',PRODUK:'Sepatu Casual Sneakers',HARGA:320000,TERJUAL:720,KLIK:4800,CVR:15.0,STATUS:'Naik',image_url:'',AFFILIATE_link:'#',DESKRIPSI:'Nyaman sepanjang hari'},
+  {ID:'P012',KATEGORI:'Kecantikan',PRODUK:'Lip Cream Matte 12H',HARGA:65000,TERJUAL:1500,KLIK:9200,CVR:16.3,STATUS:'Naik',image_url:'',AFFILIATE_link:'#',DESKRIPSI:'Tahan 12 jam'},
+  {ID:'P013',KATEGORI:'Elektronik',PRODUK:'Keyboard Mechanical RGB',HARGA:550000,TERJUAL:180,KLIK:1200,CVR:15.0,STATUS:'Stabil',image_url:'',AFFILIATE_link:'#',DESKRIPSI:'Cherry MX Switch'},
+  {ID:'P014',KATEGORI:'Rumah',PRODUK:'Lampu LED Smart WiFi',HARGA:85000,TERJUAL:960,KLIK:5600,CVR:17.1,STATUS:'Naik',image_url:'',AFFILIATE_link:'#',DESKRIPSI:'Kontrol via smartphone'},
+  {ID:'P015',KATEGORI:'Fashion',PRODUK:'Jaket Hoodie Fleece',HARGA:275000,TERJUAL:540,KLIK:3100,CVR:17.4,STATUS:'Naik',image_url:'',AFFILIATE_link:'#',DESKRIPSI:'Hangat dan stylish'},
+  {ID:'P016',KATEGORI:'Kecantikan',PRODUK:'Sunscreen SPF 50+',HARGA:95000,TERJUAL:1100,KLIK:7000,CVR:15.7,STATUS:'Naik',image_url:'',AFFILIATE_link:'#',DESKRIPSI:'Perlindungan UV maksimal'},
+  {ID:'P017',KATEGORI:'Elektronik',PRODUK:'Smart Watch Fitness',HARGA:480000,TERJUAL:280,KLIK:1700,CVR:16.5,STATUS:'Stabil',image_url:'',AFFILIATE_link:'#',DESKRIPSI:'Monitor kesehatan lengkap'},
+  {ID:'P018',KATEGORI:'Rumah',PRODUK:'Blender Portable USB',HARGA:145000,TERJUAL:420,KLIK:2400,CVR:17.5,STATUS:'Naik',image_url:'',AFFILIATE_link:'#',DESKRIPSI:'Mini & portable'},
+  {ID:'P019',KATEGORI:'Fashion',PRODUK:'Dompet Kulit Genuine',HARGA:185000,TERJUAL:630,KLIK:3700,CVR:17.0,STATUS:'Stabil',image_url:'',AFFILIATE_link:'#',DESKRIPSI:'Kulit asli berkualitas'},
+  {ID:'P020',KATEGORI:'Elektronik',PRODUK:'Speaker Bluetooth Waterproof',HARGA:220000,TERJUAL:490,KLIK:2800,CVR:17.5,STATUS:'Naik',image_url:'',AFFILIATE_link:'#',DESKRIPSI:'IPX7 waterproof'},
+  {ID:'P021',KATEGORI:'Kecantikan',PRODUK:'Toner Hyaluronic Acid',HARGA:120000,TERJUAL:760,KLIK:4600,CVR:16.5,STATUS:'Naik',image_url:'',AFFILIATE_link:'#',DESKRIPSI:'Hidrasi intens'},
+  {ID:'P022',KATEGORI:'Rumah',PRODUK:'Air Purifier HEPA Filter',HARGA:750000,TERJUAL:95,KLIK:580,CVR:16.4,STATUS:'Stabil',image_url:'',AFFILIATE_link:'#',DESKRIPSI:'Bersihkan udara ruangan'},
+  {ID:'P023',KATEGORI:'Fashion',PRODUK:'Celana Jogger Premium',HARGA:165000,TERJUAL:820,KLIK:4900,CVR:16.7,STATUS:'Naik',image_url:'',AFFILIATE_link:'#',DESKRIPSI:'Kasual & sporty'},
+  {ID:'P024',KATEGORI:'Elektronik',PRODUK:'Webcam HD 1080p',HARGA:195000,TERJUAL:340,KLIK:2000,CVR:17.0,STATUS:'Naik',image_url:'',AFFILIATE_link:'#',DESKRIPSI:'Full HD dengan mikrofon'},
+  {ID:'P025',KATEGORI:'Kecantikan',PRODUK:'Masker Clay Detox',HARGA:55000,TERJUAL:1350,KLIK:8100,CVR:16.7,STATUS:'Naik',image_url:'',AFFILIATE_link:'#',DESKRIPSI:'Membersihkan pori-pori'},
+  {ID:'P026',KATEGORI:'Rumah',PRODUK:'Teko Listrik Otomatis',HARGA:175000,TERJUAL:380,KLIK:2200,CVR:17.3,STATUS:'Stabil',image_url:'',AFFILIATE_link:'#',DESKRIPSI:'Auto shut-off'},
+  {ID:'P027',KATEGORI:'Fashion',PRODUK:'Sepatu Formal Pria',HARGA:395000,TERJUAL:290,KLIK:1750,CVR:16.6,STATUS:'Stabil',image_url:'',AFFILIATE_link:'#',DESKRIPSI:'Kulit sintetis premium'},
+];
+
+const CAT_EMOJI = {Fashion:'👟',Elektronik:'💻',Kecantikan:'💄',Rumah:'🏠',default:'📦'};
+const CAT_SUBS = {
+  Fashion:['Sepatu','Parfum','Baju','Tas','Jaket','Celana','Dompet'],
+  Elektronik:['Flashdisk','Mouse','Headphone','Powerbank','Keyboard','Smartwatch','Speaker','Webcam'],
+  Kecantikan:['Serum','Lip Cream','Sunscreen','Toner','Masker'],
+  Rumah:['Rak Buku','Lampu LED','Blender','Air Purifier','Teko'],
+};
+
+const PER_PAGE = 25;
+let allProds = [], filteredProds = [], curPage = 1;
+let curKat = null, curSub = null;
+
+async function init() {
+  const url = new URL(window.location.href);
+  const q = url.searchParams.get('q') || '';
+
+  try {
+    const r = await fetch(`${API_URL}?sheet=Product`);
+    allProds = await r.json();
+  } catch { allProds = MOCK; }
+
+  buildCatNav();
+
+  if (q) {
+    document.getElementById('searchInput').value = q;
+    onSearch();
+  } else {
+    applyFilter();
+  }
+}
+
+// ===== CATEGORY NAV =====
+function buildCatNav() {
+  const cats = [...new Set(allProds.map(p=>p.KATEGORI||'').filter(Boolean))];
+  const mainRow = document.getElementById('catMain');
+  
+  // All button
+  mainRow.innerHTML = `<button class="cat-btn active" onclick="selectKat(null,this)">🌐 Semua</button>`;
+  cats.forEach(kat => {
+    const btn = document.createElement('button');
+    btn.className = 'cat-btn';
+    btn.textContent = `${CAT_EMOJI[kat]||'📦'} ${kat}`;
+    btn.onclick = () => selectKat(kat, btn);
+    mainRow.appendChild(btn);
+  });
+}
+
+function selectKat(kat, btn) {
+  curKat = kat; curSub = null; curPage = 1;
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+
+  // Build sub buttons
+  const subRow = document.getElementById('catSub');
+  if (kat && CAT_SUBS[kat]) {
+    subRow.innerHTML = CAT_SUBS[kat].map(s=>
+      `<button class="sub-btn" onclick="selectSub('${s}',this)">${s}</button>`
+    ).join('');
+  } else {
+    subRow.innerHTML = '';
+  }
+  applyFilter();
+}
+
+function selectSub(sub, btn) {
+  curSub = sub; curPage = 1;
+  document.querySelectorAll('.sub-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilter();
+}
+
+// ===== SEARCH =====
+function onSearch() {
+  curPage = 1;
+  applyFilter();
+}
+
+// ===== FILTER & RENDER =====
+function applyFilter() {
+  const q = (document.getElementById('searchInput').value||'').toLowerCase().trim();
+  filteredProds = allProds.filter(p => {
+    const matchKat = !curKat || (p.KATEGORI||'').toLowerCase() === curKat.toLowerCase();
+    const matchSub = !curSub || (p.PRODUK||'').toLowerCase().includes(curSub.toLowerCase());
+    const matchQ   = !q || (p.PRODUK||'').toLowerCase().includes(q) || (p.KATEGORI||'').toLowerCase().includes(q);
+    return matchKat && matchSub && matchQ;
+  });
+
+  const total = filteredProds.length;
+  document.getElementById('prodCount').textContent =
+    `Menampilkan ${total} produk` + (curKat ? ` › ${curKat}` : '') + (curSub ? ` › ${curSub}` : '');
+
+  const filterParts = [];
+  if (curKat) filterParts.push(curKat);
+  if (curSub) filterParts.push(curSub);
+  if (q) filterParts.push(`"${q}"`);
+  document.getElementById('activeFilter').textContent = filterParts.join(' › ');
+
+  renderPage();
+  renderPagination();
+}
+
+function renderPage() {
+  const start = (curPage - 1) * PER_PAGE;
+  const page  = filteredProds.slice(start, start + PER_PAGE);
+  const grid  = document.getElementById('prodGrid');
+
+  if (!page.length) {
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><span>🔍</span>Produk tidak ditemukan.</div>`;
+    return;
+  }
+
+  const stars = n => {
+    const r = Math.min(5, Math.max(0, Math.round(+n/n*4+1)));
+    return '★'.repeat(r) + '☆'.repeat(5-r);
+  };
+
+  grid.innerHTML = page.map(p => {
+    const badge = p.STATUS === 'Naik' ? 'badge-naik' :
+                  p.STATUS === 'Turun' ? 'badge-turun' : 'badge-stabil';
+    const img = p.image_url
+      ? `<img src="${p.image_url}" alt="${p.PRODUK}" onerror="this.outerHTML='${CAT_EMOJI[p.KATEGORI]||'📦'}'">` 
+      : (CAT_EMOJI[p.KATEGORI] || '📦');
+    const harga = +p.HARGA ? 'Rp ' + Number(p.HARGA).toLocaleString('id-ID') : 'Rp —';
+    const rating = ((+p.CVR||15)/5).toFixed(1);
+    const link = p.AFFILIATE_link && p.AFFILIATE_link !== '#' ? p.AFFILIATE_link : '#';
+    return `
+      <div class="prod-card">
+        <span class="prod-badge ${badge}">${p.STATUS||'—'}</span>
+        <div class="prod-img">${img}</div>
+        <div class="prod-name">${p.PRODUK||'Produk'}</div>
+        <div class="prod-harga">${harga}</div>
+        <div class="prod-rating">★★★★☆ <span>${rating}/5</span></div>
+        <a href="${link}" target="_blank" class="prod-link" onclick="${link==='#'?'event.preventDefault();alert(\"Link affiliate belum tersedia\")':''}">
+          🛒 Beli di Shopee
+        </a>
+      </div>`;
+  }).join('');
+}
+
+function renderPagination() {
+  const total = Math.ceil(filteredProds.length / PER_PAGE);
+  if (total <= 1) { document.getElementById('pagination').innerHTML = ''; return; }
+
+  let html = '';
+  if (curPage > 1) html += `<button class="page-btn" onclick="goPage(${curPage-1})">‹</button>`;
+  for (let i = 1; i <= total; i++) {
+    if (i === 1 || i === total || Math.abs(i - curPage) <= 2) {
+      html += `<button class="page-btn ${i===curPage?'active':''}" onclick="goPage(${i})">${i}</button>`;
+    } else if (Math.abs(i - curPage) === 3) {
+      html += `<span class="page-dots">…</span>`;
+    }
+  }
+  if (curPage < total) html += `<button class="page-btn" onclick="goPage(${curPage+1})">›</button>`;
+  document.getElementById('pagination').innerHTML = html;
+}
+
+function goPage(p) {
+  curPage = p;
+  renderPage();
+  renderPagination();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+init();
+</script>
+</body>
+</html>

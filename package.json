@@ -1,0 +1,12 @@
+{
+  "name": "affilipro-bangyoss",
+  "version": "1.0.0",
+  "description": "AffiliPRO Dashboard Backend — Google Sheets + Drive Proxy",
+  "private": true,
+  "dependencies": {
+    "googleapis": "^144.0.0"
+  },
+  "engines": {
+    "node": ">=18.x"
+  }
+}

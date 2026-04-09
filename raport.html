@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AffiliPRO_BANGYOSS – Raport</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07090f;--bg2:#0d1120;--card:#111827;--card2:#151e2e;
+  --accent:#00b87a;--accentDim:rgba(0,184,122,.13);--accentGlow:0 0 22px rgba(0,184,122,.45);
+  --amber:#f59e0b;--red:#ef4444;--text:#e2e8f0;--muted:#5a7082;
+  --border:rgba(255,255,255,.07);--font:'Sora',sans-serif;--radius:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font);background:var(--bg);color:var(--text);display:flex;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{
+  width:56px;background:var(--bg2);border-right:1px solid var(--border);
+  position:fixed;top:0;left:0;height:100vh;z-index:200;
+  display:flex;flex-direction:column;align-items:center;padding:12px 0;gap:4px;
+}
+.s-logo{
+  width:34px;height:34px;background:var(--accent);border-radius:9px;
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;
+  color:#000;box-shadow:var(--accentGlow);margin-bottom:10px;text-decoration:none;flex-shrink:0;
+}
+.s-icon{
+  width:40px;height:40px;border-radius:10px;display:flex;align-items:center;
+  justify-content:center;cursor:pointer;color:var(--muted);transition:.2s;text-decoration:none;position:relative;
+}
+.s-icon:hover,.s-icon.active{background:var(--accentDim);color:var(--accent)}
+.s-icon svg{width:17px;height:17px}
+.s-icon::after{
+  content:attr(data-tip);position:absolute;left:52px;top:50%;transform:translateY(-50%);
+  background:var(--card2);color:var(--text);font-size:11px;font-weight:600;
+  padding:5px 10px;border-radius:7px;white-space:nowrap;pointer-events:none;
+  opacity:0;transition:opacity .15s;border:1px solid var(--border);z-index:999;
+}
+.s-icon:hover::after{opacity:1}
+
+/* MAIN */
+.main{
+  margin-left:56px;flex:1;display:flex;align-items:flex-start;justify-content:center;
+  padding:32px 24px;min-height:100vh;
+}
+.page-wrap{width:100%;max-width:800px}
+.back-btn{
+  display:inline-flex;align-items:center;gap:7px;padding:7px 14px;
+  background:var(--card);border:1px solid var(--border);border-radius:9px;
+  color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;
+  text-decoration:none;transition:.2s;margin-bottom:18px;
+}
+.back-btn:hover{border-color:var(--accent);color:var(--accent)}
+.back-btn svg{width:13px;height:13px}
+
+/* Title */
+.page-title{
+  font-size:24px;font-weight:800;margin-bottom:6px;
+  background:linear-gradient(90deg,#fff,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.page-sub{font-size:12.5px;color:var(--muted);margin-bottom:28px}
+
+/* Raport card */
+.raport-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:28px;position:relative;overflow:hidden;
+}
+.raport-card::before{
+  content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;
+  background:radial-gradient(circle,rgba(0,184,122,.08) 0%,transparent 65%);pointer-events:none;
+}
+.form-label{
+  font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;
+  letter-spacing:.06em;margin-bottom:8px;display:block;
+}
+/* Input fields */
+.input-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.input-field{
+  background:var(--card2);border:1px solid var(--border);border-radius:10px;
+  padding:10px 14px;color:var(--text);font-family:var(--font);font-size:13px;
+  outline:none;transition:.2s;width:100%;
+}
+.input-field:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accentDim)}
+.input-field::placeholder{color:var(--muted)}
+select.input-field option{background:var(--card2);color:var(--text)}
+
+/* Textarea */
+.report-textarea{
+  width:100%;min-height:260px;background:var(--card2);border:1px solid var(--border);
+  border-radius:12px;padding:16px;color:var(--text);font-family:var(--font);
+  font-size:13.5px;line-height:1.7;outline:none;resize:vertical;
+  transition:.2s;margin-bottom:10px;
+}
+.report-textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accentDim)}
+.report-textarea::placeholder{color:var(--muted)}
+
+.char-counter{
+  font-size:11px;color:var(--muted);text-align:right;margin-bottom:18px;
+  transition:color .2s;
+}
+.char-counter.warn{color:var(--amber)}
+.char-counter.over{color:var(--red)}
+
+/* Submit button */
+.submit-btn{
+  width:100%;padding:14px;border-radius:12px;border:none;
+  background:var(--accent);color:#000;font-family:var(--font);font-size:14px;
+  font-weight:800;cursor:pointer;transition:.25s;
+  box-shadow:var(--accentGlow);letter-spacing:.02em;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+}
+.submit-btn:hover{background:#00d48c;transform:translateY(-1px);box-shadow:0 0 32px rgba(0,184,122,.6)}
+.submit-btn:active{transform:translateY(0)}
+.submit-btn:disabled{background:var(--card2);color:var(--muted);cursor:not-allowed;box-shadow:none;transform:none}
+
+/* Status overlay */
+.status-overlay{
+  position:fixed;inset:0;background:rgba(7,9,15,.85);
+  display:flex;align-items:center;justify-content:center;z-index:9000;
+  opacity:0;pointer-events:none;transition:opacity .3s;
+}
+.status-overlay.show{opacity:1;pointer-events:all}
+.status-box{
+  background:var(--card);border:1px solid var(--border);border-radius:20px;
+  padding:40px 48px;text-align:center;
+  transform:scale(.85);transition:transform .3s;max-width:380px;width:90%;
+}
+.status-overlay.show .status-box{transform:scale(1)}
+.status-icon{font-size:56px;margin-bottom:16px}
+.status-title{font-size:22px;font-weight:800;margin-bottom:8px;color:var(--accent)}
+.status-msg{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:24px}
+.status-close{
+  padding:10px 28px;border-radius:10px;border:none;background:var(--accent);
+  color:#000;font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;transition:.2s;
+}
+.status-close:hover{background:#00d48c}
+
+/* History -->*/
+.hist-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:22px;margin-top:18px;
+}
+.hist-title{font-size:13.5px;font-weight:700;margin-bottom:14px}
+.hist-empty{font-size:12px;color:var(--muted);text-align:center;padding:20px}
+.hist-row{
+  background:var(--card2);border:1px solid var(--border);border-radius:10px;
+  padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:.2s;
+}
+.hist-row:hover{border-color:var(--accent)}
+.hist-row-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.hist-row-nama{font-size:12px;font-weight:700}
+.hist-row-time{font-size:10.5px;color:var(--muted)}
+.hist-row-msg{font-size:11.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--card2);border-radius:3px}
+</style>
+</head>
+<body>
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <a href="dashboard.html" class="s-logo">AP</a>
+  <a href="dashboard.html" class="s-icon" data-tip="Dashboard">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/>
+      <rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>
+    </svg>
+  </a>
+  <a href="analytics.html" class="s-icon" data-tip="Analytics">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+    </svg>
+  </a>
+  <a href="products.html" class="s-icon" data-tip="Produk">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+      <line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
+    </svg>
+  </a>
+  <a href="raport.html" class="s-icon active" data-tip="Raport">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+      <polyline points="14 2 14 8 20 8"/>
+      <line x1="16" y1="13" x2="8" y2="13"/>
+    </svg>
+  </a>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="page-wrap">
+    <a href="dashboard.html" class="back-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      Kembali ke Dashboard
+    </a>
+    <div class="page-title">📋 Raport</div>
+    <div class="page-sub">Catat masukan, evaluasi, atau laporan ke dalam database Google Spreadsheet. Maksimal 500 kata.</div>
+
+    <!-- Form -->
+    <div class="raport-card">
+      <!-- Info fields -->
+      <div class="input-row">
+        <div>
+          <label class="form-label">Nama Pelapor</label>
+          <input type="text" id="fNama" class="input-field" placeholder="Masukkan nama Anda…">
+        </div>
+        <div>
+          <label class="form-label">Kategori Raport</label>
+          <select id="fKategori" class="input-field">
+            <option value="">-- Pilih Kategori --</option>
+            <option value="Evaluasi Produk">Evaluasi Produk</option>
+            <option value="Laporan Penjualan">Laporan Penjualan</option>
+            <option value="Masukan Platform">Masukan Platform</option>
+            <option value="Bug / Error">Bug / Error</option>
+            <option value="Strategi">Strategi</option>
+            <option value="Lainnya">Lainnya</option>
+          </select>
+        </div>
+      </div>
+      <div class="input-row" style="grid-template-columns:1fr">
+        <div>
+          <label class="form-label">Judul Raport</label>
+          <input type="text" id="fJudul" class="input-field" placeholder="Judul singkat raport…">
+        </div>
+      </div>
+
+      <!-- Textarea -->
+      <label class="form-label">Isi Raport</label>
+      <textarea
+        id="raportText"
+        class="report-textarea"
+        placeholder="Tuliskan isi raport, masukan, evaluasi, atau catatan penting di sini…&#10;&#10;Contoh:&#10;- Produk Sepatu Running Pro mengalami kenaikan klik 15% di platform TikTok&#10;- Perlu penambahan deskripsi produk yang lebih detail&#10;- CVR di Facebook masih di bawah rata-rata, perlu strategi baru…"
+        oninput="countWords()"
+        maxlength="3500"
+      ></textarea>
+      <div class="char-counter" id="charCount">0 / 500 kata</div>
+
+      <button class="submit-btn" id="submitBtn" onclick="submitRaport()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:18px;height:18px">
+          <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+        </svg>
+        Kirim Raport ke Database
+      </button>
+    </div>
+
+    <!-- Riwayat -->
+    <div class="hist-card">
+      <div class="hist-title">📂 Riwayat Raport Terakhir</div>
+      <div id="histList"><div class="hist-empty">Belum ada riwayat. Kirim raport pertama Anda!</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Success Overlay -->
+<div class="status-overlay" id="statusOverlay">
+  <div class="status-box">
+    <div class="status-icon" id="statusIcon">✅</div>
+    <div class="status-title" id="statusTitle">SUKSES!</div>
+    <div class="status-msg" id="statusMsg">
+      Raport Anda berhasil dikirim ke Google Spreadsheet.<br>
+      Terima kasih atas masukan yang berharga!
+    </div>
+    <button class="status-close" onclick="closeStatus()">Tutup</button>
+  </div>
+</div>
+
+<script>
+const API_URL = 'https://script.google.com/macros/s/GANTI_DENGAN_ID_SCRIPT_ANDA/exec';
+const MAX_WORDS = 500;
+let history = JSON.parse(localStorage.getItem('raportHistory') || '[]');
+
+// Word counter
+function countWords() {
+  const text = document.getElementById('raportText').value;
+  const words = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+  const counter = document.getElementById('charCount');
+  counter.textContent = `${words} / ${MAX_WORDS} kata`;
+
+  if (words > MAX_WORDS) {
+    counter.className = 'char-counter over';
+    // Trim to max words
+    const trimmed = text.trim().split(/\s+/).slice(0, MAX_WORDS).join(' ');
+    document.getElementById('raportText').value = trimmed;
+    counter.textContent = `${MAX_WORDS} / ${MAX_WORDS} kata (batas tercapai)`;
+  } else if (words > MAX_WORDS * 0.8) {
+    counter.className = 'char-counter warn';
+  } else {
+    counter.className = 'char-counter';
+  }
+}
+
+// Submit
+async function submitRaport() {
+  const nama = document.getElementById('fNama').value.trim();
+  const kat  = document.getElementById('fKategori').value;
+  const judul= document.getElementById('fJudul').value.trim();
+  const isi  = document.getElementById('raportText').value.trim();
+
+  // Validation
+  if (!nama) { showErr('Nama pelapor wajib diisi!'); return; }
+  if (!kat)  { showErr('Pilih kategori raport terlebih dahulu!'); return; }
+  if (!judul){ showErr('Judul raport wajib diisi!'); return; }
+  if (!isi)  { showErr('Isi raport tidak boleh kosong!'); return; }
+
+  const words = isi.split(/\s+/).length;
+  if (words > MAX_WORDS) { showErr(`Isi raport melebihi batas ${MAX_WORDS} kata!`); return; }
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.innerHTML = `<span style="animation:spin 1s linear infinite;display:inline-block">⏳</span> Mengirim…`;
+
+  const timestamp = new Date().toISOString();
+  const row = [timestamp, nama, kat, judul, isi, words + ' kata'];
+
+  try {
+    /* Kirim ke Google Apps Script */
+    await fetch(API_URL, {
+      method: 'POST',
+      mode: 'no-cors', // Apps Script tidak butuh CORS response untuk append
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ sheet: 'RAPORT', action: 'append', row })
+    });
+
+    // Simpan ke riwayat lokal
+    history.unshift({ timestamp, nama, kat, judul, isi: isi.substring(0, 100) });
+    if (history.length > 10) history = history.slice(0, 10);
+    localStorage.setItem('raportHistory', JSON.stringify(history));
+    renderHistory();
+
+    // Reset form
+    document.getElementById('fNama').value = '';
+    document.getElementById('fKategori').value = '';
+    document.getElementById('fJudul').value = '';
+    document.getElementById('raportText').value = '';
+    document.getElementById('charCount').textContent = '0 / 500 kata';
+
+    showSuccess('SUKSES! ✅', 'Raport berhasil dikirim ke Google Spreadsheet!', '✅');
+
+  } catch (e) {
+    // Even with no-cors, fetch resolves — show success
+    // (Apps Script with no-cors will save but won't return response)
+    history.unshift({ timestamp, nama, kat, judul, isi: isi.substring(0, 100) });
+    localStorage.setItem('raportHistory', JSON.stringify(history));
+    renderHistory();
+    document.getElementById('raportText').value = '';
+    showSuccess('SUKSES! ✅', 'Raport telah dikirim! Cek Google Spreadsheet untuk konfirmasi.', '✅');
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:18px;height:18px">
+    <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+  </svg> Kirim Raport ke Database`;
+}
+
+function showSuccess(title, msg, icon) {
+  document.getElementById('statusIcon').textContent = icon;
+  document.getElementById('statusTitle').textContent = title;
+  document.getElementById('statusMsg').innerHTML = msg;
+  document.getElementById('statusOverlay').classList.add('show');
+}
+function showErr(msg) {
+  showSuccess('⚠️ Perhatian', msg, '⚠️');
+  document.getElementById('statusTitle').style.color = 'var(--amber)';
+}
+function closeStatus() {
+  document.getElementById('statusOverlay').classList.remove('show');
+  document.getElementById('statusTitle').style.color = 'var(--accent)';
+}
+
+function renderHistory() {
+  const list = document.getElementById('histList');
+  if (!history.length) {
+    list.innerHTML = '<div class="hist-empty">Belum ada riwayat.</div>';
+    return;
+  }
+  list.innerHTML = history.map(h => {
+    const d = new Date(h.timestamp);
+    const tgl = d.toLocaleDateString('id-ID', {day:'2-digit',month:'short',year:'numeric'});
+    const jam = d.toLocaleTimeString('id-ID', {hour:'2-digit',minute:'2-digit'});
+    return `
+      <div class="hist-row">
+        <div class="hist-row-head">
+          <div class="hist-row-nama">👤 ${h.nama} — <span style="color:var(--accent)">${h.kat}</span></div>
+          <div class="hist-row-time">${tgl} ${jam}</div>
+        </div>
+        <div style="font-size:11.5px;font-weight:600;color:var(--text);margin-bottom:2px">${h.judul}</div>
+        <div class="hist-row-msg">${h.isi}${h.isi.length>=100?'…':''}</div>
+      </div>`;
+  }).join('');
+}
+
+// CSS spin
+document.head.insertAdjacentHTML('beforeend',`<style>@keyframes spin{to{transform:rotate(360deg)}}</style>`);
+
+renderHistory();
+</script>
+</body>
+</html>

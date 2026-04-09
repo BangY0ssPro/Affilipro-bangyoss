@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="theme-responsive.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AffiliPRO_BANGYOSS – Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+/* ===================== CSS VARIABLES ===================== */
+:root {
+  --bg:       #07090f;
+  --bg2:      #0d1120;
+  --card:     #111827;
+  --card2:    #151e2e;
+  --accent:   #00b87a;
+  --accentDim:rgba(0,184,122,.13);
+  --accentGlow:0 0 22px rgba(0,184,122,.45);
+  --amber:    #f59e0b;
+  --red:      #ef4444;
+  --text:     #e2e8f0;
+  --muted:    #5a7082;
+  --border:   rgba(255,255,255,.07);
+  --sideW:    240px;
+  --font:     'Sora',sans-serif;
+  --radius:   14px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{font-family:var(--font);background:var(--bg);color:var(--text);display:flex;overflow-x:hidden}
+
+/* =================== SIDEBAR =================== */
+.sidebar{
+  width:var(--sideW);background:var(--bg2);border-right:1px solid var(--border);
+  position:fixed;top:0;left:0;height:100vh;z-index:200;
+  display:flex;flex-direction:column;transition:width .25s ease;
+}
+.sidebar-logo{
+  padding:18px 14px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;
+}
+.logo-box{
+  width:36px;height:36px;background:var(--accent);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;font-weight:800;
+  font-size:13px;color:#000;box-shadow:var(--accentGlow);flex-shrink:0;
+}
+.logo-txt{font-size:11px;font-weight:700;line-height:1.3;color:var(--text)}
+.logo-txt span{color:var(--accent)}
+.nav{padding:12px 8px;flex:1;overflow-y:auto;overflow-x:hidden}
+.nav-item{
+  display:flex;align-items:center;gap:11px;padding:9px 11px;border-radius:10px;
+  cursor:pointer;color:var(--muted);font-size:12.5px;font-weight:500;
+  margin-bottom:2px;transition:all .2s;text-decoration:none;
+  white-space:nowrap;position:relative;
+}
+.nav-item:hover,.nav-item.active{background:var(--accentDim);color:var(--accent)}
+.nav-item.active{box-shadow:inset 0 0 0 1px rgba(0,184,122,.25)}
+.nav-item svg{width:17px;height:17px;flex-shrink:0;transition:transform .15s}
+.nav-lbl{overflow:hidden;transition:opacity .2s,width .2s}
+.nav-chevron{margin-left:auto;width:13px!important;height:13px!important;transition:transform .2s}
+.nav-chevron.open{transform:rotate(180deg)}
+.sub-menu{overflow:hidden;max-height:0;transition:max-height .3s ease}
+.sub-menu.open{max-height:300px}
+.sub-item{
+  display:flex;align-items:center;gap:9px;padding:7px 10px 7px 34px;
+  border-radius:8px;cursor:pointer;color:var(--muted);font-size:12px;
+  font-weight:500;margin-bottom:1px;transition:all .2s;text-decoration:none;
+}
+.sub-item:hover{background:var(--accentDim);color:var(--accent)}
+.sub-dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0}
+
+/* =================== MAIN =================== */
+.main{margin-left:var(--sideW);flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{
+  display:flex;align-items:center;gap:14px;padding:13px 22px;
+  border-bottom:1px solid var(--border);background:var(--bg2);
+  position:sticky;top:0;z-index:100;
+}
+.topbar-title{font-size:15px;font-weight:700;flex-shrink:0;
+  background:linear-gradient(90deg,#fff,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.search-wrap{flex:1;max-width:380px;position:relative}
+.search-inner{
+  display:flex;align-items:center;gap:8px;background:var(--card);
+  border:1px solid var(--border);border-radius:10px;padding:7px 13px;transition:.2s;
+}
+.search-inner:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accentDim)}
+.search-inner svg{width:15px;height:15px;color:var(--muted);flex-shrink:0}
+.search-inner input{
+  background:none;border:none;outline:none;color:var(--text);font-family:var(--font);font-size:12.5px;width:100%
+}
+.search-inner input::placeholder{color:var(--muted)}
+/* search autocomplete */
+.search-drop{
+  position:absolute;top:calc(100%+6px);left:0;right:0;background:var(--card2);
+  border:1px solid var(--border);border-radius:10px;display:none;
+  box-shadow:0 12px 40px rgba(0,0,0,.6);z-index:300;overflow:hidden;
+}
+.search-drop.open{display:block}
+.search-drop-item{
+  padding:9px 14px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:9px;
+  transition:background .15s;
+}
+.search-drop-item:hover{background:var(--accentDim);color:var(--accent)}
+.topbar-right{display:flex;align-items:center;gap:8px;margin-left:auto}
+/* Time filter */
+.tf{display:flex;gap:3px;background:var(--card);border:1px solid var(--border);border-radius:9px;padding:3px}
+.tf-btn{
+  padding:4px 11px;border-radius:6px;border:none;background:none;
+  color:var(--muted);font-family:var(--font);font-size:11.5px;font-weight:600;
+  cursor:pointer;transition:all .2s;
+}
+.tf-btn.active{background:var(--accent);color:#000;box-shadow:var(--accentGlow)}
+/* Notification */
+.notif-wrap{position:relative}
+.icon-btn{
+  width:34px;height:34px;background:var(--card);border:1px solid var(--border);
+  border-radius:9px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--muted);transition:.2s;
+}
+.icon-btn:hover{border-color:var(--accent);color:var(--accent)}
+.icon-btn svg{width:15px;height:15px}
+.notif-dot{
+  position:absolute;top:5px;right:5px;width:8px;height:8px;background:var(--red);
+  border-radius:50%;border:2px solid var(--bg2);display:none;
+}
+.notif-dot.show{display:block;animation:dotPulse 1.5s infinite}
+@keyframes dotPulse{0%,100%{opacity:1}50%{opacity:.4}}
+.notif-panel{
+  position:absolute;top:calc(100%+8px);right:0;width:310px;background:var(--card2);
+  border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:0 20px 60px rgba(0,0,0,.55);display:none;z-index:400;overflow:hidden;
+}
+.notif-panel.open{display:block}
+.notif-head{padding:12px 15px;border-bottom:1px solid var(--border);font-size:12.5px;font-weight:700;
+  display:flex;align-items:center;gap:8px}
+.notif-row{
+  padding:10px 15px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:11px;font-size:12px;cursor:pointer;transition:background .15s;
+}
+.notif-row:hover{background:var(--accentDim)}
+.notif-row:last-child{border-bottom:none}
+.nico{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+
+/* =================== CONTENT =================== */
+.content{padding:22px;flex:1}
+/* Stats */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.stat-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:18px;position:relative;overflow:hidden;transition:.25s;
+}
+.stat-card:hover{border-color:rgba(0,184,122,.35);box-shadow:0 0 28px rgba(0,184,122,.08)}
+.stat-card::after{
+  content:'';position:absolute;top:-20px;right:-20px;width:80px;height:80px;
+  background:radial-gradient(circle,var(--accentDim) 0%,transparent 65%);pointer-events:none;
+}
+.stat-label{font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.stat-sub{font-size:10px;color:var(--muted);margin-bottom:8px}
+.stat-val{font-size:26px;font-weight:800;line-height:1;margin-bottom:8px}
+.stat-ico{
+  position:absolute;top:14px;right:14px;width:34px;height:34px;background:var(--accentDim);
+  border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--accent);
+}
+.stat-ico svg{width:17px;height:17px}
+.pill{display:inline-flex;align-items:center;gap:3px;font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:20px}
+.pill.up{background:rgba(0,184,122,.14);color:var(--accent)}
+.pill.dn{background:rgba(239,68,68,.14);color:var(--red)}
+
+/* Charts row */
+.charts-row{display:grid;grid-template-columns:1fr 360px;gap:14px;margin-bottom:20px}
+.ccard{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px}
+.ccard-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.ccard-title{font-size:13.5px;font-weight:700}
+.legend{display:flex;gap:14px;margin-top:6px}
+.leg{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
+.leg-dot{width:7px;height:7px;border-radius:50%}
+.sort-row{display:flex;gap:4px}
+.s-btn{
+  padding:4px 10px;border-radius:6px;border:1px solid var(--border);background:none;
+  color:var(--muted);font-family:var(--font);font-size:11px;cursor:pointer;transition:.2s;font-weight:500;
+}
+.s-btn.active{background:var(--accent);border-color:var(--accent);color:#000;font-weight:700}
+/* Donut panel */
+.donut-wrap{display:flex;align-items:center;gap:14px}
+.donut-cvs{width:110px;height:110px;flex-shrink:0}
+.donut-stats{}
+.ds-label{font-size:10.5px;color:var(--muted);margin-bottom:3px;margin-top:10px}
+.ds-val{font-size:20px;font-weight:800;line-height:1}
+
+/* Bottom row */
+.bot-row{display:grid;grid-template-columns:1fr 320px;gap:14px}
+.prod-scroll{
+  display:flex;gap:11px;overflow-x:auto;padding-bottom:6px;
+  scrollbar-width:thin;scrollbar-color:var(--card2) transparent;
+}
+.prod-card{
+  flex-shrink:0;width:120px;background:var(--card2);border:1px solid var(--border);
+  border-radius:12px;padding:10px;cursor:pointer;transition:.2s;position:relative;
+}
+.prod-card:hover{border-color:var(--accent);box-shadow:0 0 16px rgba(0,184,122,.18)}
+.prod-img{
+  width:100%;height:85px;border-radius:8px;background:var(--bg2);margin-bottom:7px;
+  display:flex;align-items:center;justify-content:center;font-size:26px;overflow:hidden;
+}
+.prod-img img{width:100%;height:100%;object-fit:cover;border-radius:8px}
+.prod-name{font-size:10.5px;font-weight:600;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prod-sold{font-size:10px;color:var(--muted)}
+.rank-badge{
+  position:absolute;top:5px;left:5px;width:18px;height:18px;background:var(--accent);
+  border-radius:5px;display:flex;align-items:center;justify-content:center;
+  font-size:9px;font-weight:800;color:#000;z-index:5;
+}
+/* Social list */
+.soc-list{display:flex;flex-direction:column;gap:7px}
+.soc-row{
+  display:flex;align-items:center;gap:11px;padding:9px 11px;background:var(--card2);
+  border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:.2s;
+}
+.soc-row:hover{border-color:var(--accent);box-shadow:0 0 12px rgba(0,184,122,.12)}
+.soc-ico{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.soc-name{flex:1;font-size:12px;font-weight:600;text-transform:capitalize}
+.soc-clicks{font-size:12.5px;font-weight:700;color:var(--accent)}
+/* Loading */
+.loader{display:flex;align-items:center;justify-content:center;padding:32px;color:var(--muted);font-size:12px;gap:8px}
+/* Scrollbar */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--card2);border-radius:3px}
+/* Glow pulse */
+@keyframes glowPulse{0%,100%{opacity:.7}50%{opacity:1}}
+.glow-ring{animation:glowPulse 2.5s infinite}
+/* Toast */
+.toast{
+  position:fixed;bottom:24px;right:24px;background:var(--accent);color:#000;
+  padding:10px 20px;border-radius:10px;font-size:12.5px;font-weight:700;
+  box-shadow:var(--accentGlow);transform:translateY(80px);opacity:0;
+  transition:.3s;z-index:9999;
+}
+.toast.show{transform:translateY(0);opacity:1}
+/* Tooltip override for chart */
+.chart-tooltip{position:absolute;pointer-events:none}
+</style>
+</head>
+<body>
+
+<!-- ===================== SIDEBAR ===================== -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-box">AP</div>
+    <div class="logo-txt">AffiliPRO<br><span>_BANGYOSS</span></div>
+  </div>
+  <nav class="nav">
+    <!-- 1 Dashboard -->
+    <a href="dashboard.html" class="nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/>
+        <rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>
+      </svg>
+      <span class="nav-lbl">Dashboard</span>
+    </a>
+    <!-- 2 Analytics -->
+    <a href="analytics.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+      </svg>
+      <span class="nav-lbl">Analytics</span>
+    </a>
+    <!-- 3 Produk -->
+    <a href="products.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <path d="M16 10a4 4 0 01-8 0"/>
+      </svg>
+      <span class="nav-lbl">Produk</span>
+    </a>
+    <!-- 4 Sosial Media (dropdown) -->
+    <div class="nav-item" onclick="toggleSocDrop(this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+      </svg>
+      <span class="nav-lbl">Sosial Media</span>
+      <svg class="nav-chevron" id="socChevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <polyline points="6 9 12 15 18 9"/>
+      </svg>
+    </div>
+    <div class="sub-menu" id="socMenu">
+      <a class="sub-item" onclick="filterSocial('youtube')"><span class="sub-dot"></span>🎥 YouTube</a>
+      <a class="sub-item" onclick="filterSocial('facebook')"><span class="sub-dot"></span>📘 Facebook</a>
+      <a class="sub-item" onclick="filterSocial('instagram')"><span class="sub-dot"></span>📸 Instagram</a>
+      <a class="sub-item" onclick="filterSocial('tiktok')"><span class="sub-dot"></span>🎵 TikTok</a>
+      <a class="sub-item" onclick="filterSocial('threads')"><span class="sub-dot"></span>🧵 Threads</a>
+      <a class="sub-item" onclick="filterSocial('x')"><span class="sub-dot"></span>𝕏 X (Twitter)</a>
+      <a class="sub-item" onclick="filterSocial('shopee')"><span class="sub-dot"></span>🛒 Shopee</a>
+    </div>
+    <!-- 5 Raport -->
+    <a href="raport.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+        <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+        <polyline points="10 9 9 9 8 9"/>
+      </svg>
+      <span class="nav-lbl">Raport</span>
+    </a>
+  </nav>
+</aside>
+
+<!-- ===================== MAIN ===================== -->
+<main class="main">
+  <!-- Topbar -->
+  <div class="topbar">
+    <span class="topbar-title">Overview Dashboard</span>
+    <!-- Search -->
+    <div class="search-wrap">
+      <div class="search-inner">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input id="searchInput" type="text" placeholder="Ketik produk, tekan Enter…"
+          oninput="liveSearch(this.value)" onkeydown="doSearch(event)" autocomplete="off">
+      </div>
+      <div class="search-drop" id="searchDrop"></div>
+    </div>
+    <div class="topbar-right">
+      <div class="tf">
+        <button class="tf-btn" onclick="setDays(1,this)">1D</button>
+        <button class="tf-btn" onclick="setDays(7,this)">7D</button>
+        <button class="tf-btn active" onclick="setDays(30,this)">30D</button>
+      </div>
+      <div class="notif-wrap">
+        <div class="icon-btn" onclick="toggleNotif()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 01-3.46 0"/>
+          </svg>
+          <div class="notif-dot" id="notifDot"></div>
+        </div>
+        <div class="notif-panel" id="notifPanel">
+          <div class="notif-head">🔔 Total Klik Sosial Media</div>
+          <div id="notifBody"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/>
+        </svg></div>
+        <div class="stat-label">Total Produk</div>
+        <div class="stat-sub">Semua kategori</div>
+        <div class="stat-val" id="vProduk">—</div>
+        <span class="pill up" id="tProduk">—</span>
+      </div>
+      <div class="stat-card">
+        <div class="stat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
+        </svg></div>
+        <div class="stat-label">Total Klik</div>
+        <div class="stat-sub">Semua platform</div>
+        <div class="stat-val" id="vKlik">—</div>
+        <span class="pill up" id="tKlik">—</span>
+      </div>
+      <div class="stat-card">
+        <div class="stat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="1" x2="12" y2="23"/>
+          <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+        </svg></div>
+        <div class="stat-label">Total Penjualan</div>
+        <div class="stat-sub">Dari semua platform</div>
+        <div class="stat-val" id="vJual">—</div>
+        <span class="pill up" id="tJual">—</span>
+      </div>
+      <div class="stat-card">
+        <div class="stat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>
+          <polyline points="16 7 22 7 22 13"/>
+        </svg></div>
+        <div class="stat-label">Total CVR</div>
+        <div class="stat-sub">Conversion Rate</div>
+        <div class="stat-val" id="vCvr">—</div>
+        <span class="pill up" id="tCvr">—</span>
+      </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="charts-row">
+      <div class="ccard">
+        <div class="ccard-head">
+          <div>
+            <div class="ccard-title">Sales Analytic</div>
+            <div class="legend">
+              <div class="leg"><div class="leg-dot" style="background:var(--accent)"></div>Total Klik</div>
+              <div class="leg"><div class="leg-dot" style="background:var(--amber)"></div>Total Penjualan</div>
+            </div>
+          </div>
+          <div class="sort-row">
+            <button class="s-btn" onclick="setPeriod('minggu',this)">Minggu</button>
+            <button class="s-btn active" onclick="setPeriod('bulan',this)">Bulan</button>
+            <button class="s-btn" onclick="setPeriod('tahun',this)">Tahun</button>
+          </div>
+        </div>
+        <canvas id="waveChart" height="175"></canvas>
+      </div>
+      <div class="ccard">
+        <div class="ccard-head">
+          <div class="ccard-title">Sales Target</div>
+        </div>
+        <div class="donut-wrap">
+          <div class="donut-cvs"><canvas id="donutChart"></canvas></div>
+          <div class="donut-stats">
+            <div class="ds-label">💚 Total Klik</div>
+            <div class="ds-val" id="dKlik" style="color:var(--accent)">—</div>
+            <div class="ds-label">🟡 Penjualan</div>
+            <div class="ds-val" id="dJual" style="color:var(--amber)">—</div>
+            <div class="ds-label">📦 Produk Terlaris</div>
+            <div id="dTopProd" style="font-size:11px;margin-top:3px;color:var(--text)">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Row -->
+    <div class="bot-row">
+      <div class="ccard">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <div class="ccard-title">🏆 Top Penjualan Produk</div>
+          <a href="products.html" style="font-size:11px;color:var(--accent);text-decoration:none;font-weight:600">Lihat Semua →</a>
+        </div>
+        <div class="prod-scroll" id="topProds"><div class="loader">Memuat produk…</div></div>
+      </div>
+      <div class="ccard">
+        <div class="ccard-title" style="margin-bottom:14px">📱 Klik Sosial Media</div>
+        <div class="soc-list" id="socList"><div class="loader">Memuat data…</div></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// CONFIG — Ganti dengan URL Google Apps Script Web App Anda
+// ============================================================
+const API_URL = 'https://script.google.com/macros/s/GANTI_DENGAN_ID_SCRIPT_ANDA/exec';
+
+// ============================================================
+// MOCK DATA (digunakan jika API belum dikonfigurasi)
+// ============================================================
+const MOCK_PRODUCTS = [
+  {ID:'P001',KATEGORI:'Fashion',PRODUK:'Sepatu Running Pro',PLATFORM:'shopee',HARGA:289000,TERJUAL:1284,KLIK:8432,CVR:15.2,STATUS:'Naik',image_url:'',TANGGAL:'2025-01-01'},
+  {ID:'P002',KATEGORI:'Fashion',PRODUK:'Parfum Framinton',PLATFORM:'shopee',HARGA:245000,TERJUAL:956,KLIK:6230,CVR:15.3,STATUS:'Naik',image_url:'',TANGGAL:'2025-01-05'},
+  {ID:'P003',KATEGORI:'Elektronik',PRODUK:'Flashdisk 64GB',PLATFORM:'shopee',HARGA:89000,TERJUAL:2100,KLIK:12400,CVR:16.9,STATUS:'Naik',image_url:'',TANGGAL:'2025-01-10'},
+  {ID:'P004',KATEGORI:'Fashion',PRODUK:'Baju Casual Premium',PLATFORM:'shopee',HARGA:150000,TERJUAL:780,KLIK:4500,CVR:17.3,STATUS:'Stabil',image_url:'',TANGGAL:'2025-01-12'},
+  {ID:'P005',KATEGORI:'Elektronik',PRODUK:'Mouse Wireless Slim',PLATFORM:'shopee',HARGA:120000,TERJUAL:650,KLIK:3800,CVR:17.1,STATUS:'Naik',image_url:'',TANGGAL:'2025-01-15'},
+  {ID:'P006',KATEGORI:'Kecantikan',PRODUK:'Serum Vitamin C',PLATFORM:'shopee',HARGA:175000,TERJUAL:430,KLIK:2900,CVR:14.8,STATUS:'Turun',image_url:'',TANGGAL:'2025-01-18'},
+  {ID:'P007',KATEGORI:'Elektronik',PRODUK:'Headphone Bluetooth',PLATFORM:'shopee',HARGA:350000,TERJUAL:320,KLIK:1900,CVR:16.8,STATUS:'Naik',image_url:'',TANGGAL:'2025-01-20'},
+  {ID:'P008',KATEGORI:'Rumah',PRODUK:'Rak Buku Kayu Modern',PLATFORM:'shopee',HARGA:450000,TERJUAL:210,KLIK:1500,CVR:14.0,STATUS:'Stabil',image_url:'',TANGGAL:'2025-01-22'},
+  {ID:'P009',KATEGORI:'Fashion',PRODUK:'Tas Ransel Kanvas',PLATFORM:'shopee',HARGA:199000,TERJUAL:890,KLIK:5200,CVR:17.1,STATUS:'Naik',image_url:'',TANGGAL:'2025-01-25'},
+  {ID:'P010',KATEGORI:'Elektronik',PRODUK:'Powerbank 20000mAh',PLATFORM:'shopee',HARGA:280000,TERJUAL:560,KLIK:3200,CVR:17.5,STATUS:'Naik',image_url:'',TANGGAL:'2025-01-28'},
+];
+const MOCK_SOCIAL = [
+  {PLATFORM:'youtube',KLIK:3200,PENJUALAN:150,timestamp:'2025-01-01'},
+  {PLATFORM:'facebook',KLIK:5400,PENJUALAN:280,timestamp:'2025-01-01'},
+  {PLATFORM:'instagram',KLIK:7800,PENJUALAN:420,timestamp:'2025-01-01'},
+  {PLATFORM:'tiktok',KLIK:12500,PENJUALAN:680,timestamp:'2025-01-01'},
+  {PLATFORM:'threads',KLIK:900,PENJUALAN:40,timestamp:'2025-01-01'},
+  {PLATFORM:'x',KLIK:2100,PENJUALAN:90,timestamp:'2025-01-01'},
+  {PLATFORM:'shopee',KLIK:8900,PENJUALAN:540,timestamp:'2025-01-01'},
+];
+
+// ============================================================
+// PLATFORM CONFIG
+// ============================================================
+const SOC_CFG = {
+  youtube:  {emoji:'🎥',color:'#ff4444',bg:'rgba(255,68,68,.14)'},
+  facebook: {emoji:'📘',color:'#1877f2',bg:'rgba(24,119,242,.14)'},
+  instagram:{emoji:'📸',color:'#e1306c',bg:'rgba(225,48,108,.14)'},
+  tiktok:   {emoji:'🎵',color:'#69c9d0',bg:'rgba(105,201,208,.14)'},
+  threads:  {emoji:'🧵',color:'#aaa',bg:'rgba(170,170,170,.12)'},
+  x:        {emoji:'𝕏', color:'#ddd',bg:'rgba(220,220,220,.1)'},
+  shopee:   {emoji:'🛒',color:'#f26522',bg:'rgba(242,101,34,.14)'},
+};
+const CAT_EMOJI = {Fashion:'👟',Elektronik:'💻',Kecantikan:'💄',Rumah:'🏠',default:'📦'};
+
+// ============================================================
+// STATE
+// ============================================================
+let allProds = [], allSoc = [], days = 30, period = 'bulan';
+let wChart = null, dChart = null, socAgg = {};
+
+// ============================================================
+// FETCH & INIT
+// ============================================================
+async function fetchSheet(name) {
+  /* Mengambil data dari Google Apps Script Web App */
+  try {
+    const r = await fetch(`${API_URL}?sheet=${encodeURIComponent(name)}`);
+    const j = await r.json();
+    if (j.error) throw new Error(j.error);
+    return j;
+  } catch(e) {
+    console.warn('API tidak tersambung, menggunakan data demo:', e.message);
+    return null;
+  }
+}
+
+async function init() {
+  const [p, s] = await Promise.all([fetchSheet('Product'), fetchSheet('SOSIAL KLIK')]);
+  allProds = p || MOCK_PRODUCTS;
+  allSoc   = s || MOCK_SOCIAL;
+  render();
+  buildNotif();
+}
+
+// ============================================================
+// FILTER
+// ============================================================
+function byDays(arr, d) {
+  if (!d || d >= 365) return arr;
+  const cut = Date.now() - d * 86400000;
+  return arr.filter(x => {
+    const t = x.TANGGAL || x.timestamp;
+    return !t || new Date(t).getTime() >= cut;
+  });
+}
+
+// ============================================================
+// MAIN RENDER
+// ============================================================
+function render() {
+  const fp = byDays(allProds, days);
+  const fs = byDays(allSoc, days);
+
+  // Aggregate social
+  socAgg = {};
+  fs.forEach(d => {
+    const p = (d.PLATFORM||'').toLowerCase();
+    if (!socAgg[p]) socAgg[p] = {klik:0,jual:0};
+    socAgg[p].klik += +d.KLIK||0;
+    socAgg[p].jual += +d.PENJUALAN||0;
+  });
+
+  const totKlik = Object.values(socAgg).reduce((s,v)=>s+v.klik,0);
+  const totJual = Object.values(socAgg).reduce((s,v)=>s+v.jual,0);
+  const cvr = totKlik > 0 ? ((totJual/totKlik)*100).toFixed(1) : 0;
+
+  // Stats
+  set('vProduk', fmt(fp.length));
+  set('vKlik',   fmt(totKlik));
+  set('vJual',   fmt(totJual));
+  set('vCvr',    cvr + '%');
+  set('tProduk','↑ ' + fp.length + ' produk');
+  set('tKlik',  '↑ ' + fmt(totKlik));
+  set('tJual',  '↑ ' + fmt(totJual));
+  set('tCvr',   '≈ ' + cvr + '%');
+
+  // Donut values
+  set('dKlik', fmt(totKlik));
+  set('dJual', fmt(totJual));
+  const top = [...fp].sort((a,b)=>(+b.TERJUAL||0)-(+a.TERJUAL||0))[0];
+  set('dTopProd', top ? `${CAT_EMOJI[top.KATEGORI]||'📦'} ${top.PRODUK}` : '—');
+
+  renderWave();
+  renderDonut(totKlik, totJual);
+  renderProds(fp);
+  renderSoc();
+}
+
+// ============================================================
+// WAVE CHART
+// ============================================================
+const WAVE_DATA = {
+  minggu:{
+    labels:['Sen','Sel','Rab','Kam','Jum','Sab','Min'],
+    klik:[3200,4500,3800,5200,4100,6800,5500],
+    jual:[180,320,260,410,290,520,380]
+  },
+  bulan:{
+    labels:['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'],
+    klik:[12000,15000,13500,18000,16500,22000,19000,24000,21000,26000,23500,28000],
+    jual:[800,1100,950,1400,1200,1800,1500,2100,1750,2300,2000,2500]
+  },
+  tahun:{
+    labels:['2021','2022','2023','2024','2025'],
+    klik:[85000,120000,145000,180000,220000],
+    jual:[5200,8100,10500,13200,16800]
+  }
+};
+function renderWave() {
+  const d = WAVE_DATA[period];
+  const ctx = document.getElementById('waveChart').getContext('2d');
+  if (wChart) wChart.destroy();
+  wChart = new Chart(ctx, {
+    type:'line',
+    data:{
+      labels: d.labels,
+      datasets:[
+        {label:'Total Klik',data:d.klik,borderColor:'#00b87a',backgroundColor:'rgba(0,184,122,.08)',
+         fill:true,tension:.42,borderWidth:2,pointRadius:3,pointBackgroundColor:'#00b87a',pointBorderWidth:0},
+        {label:'Total Penjualan',data:d.jual,borderColor:'#f59e0b',backgroundColor:'rgba(245,158,11,.06)',
+         fill:true,tension:.42,borderWidth:2,pointRadius:3,pointBackgroundColor:'#f59e0b',pointBorderWidth:0}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:true,
+      plugins:{legend:{display:false},tooltip:{backgroundColor:'#111827',titleColor:'#e2e8f0',
+        bodyColor:'#5a7082',borderColor:'rgba(0,184,122,.3)',borderWidth:1}},
+      scales:{
+        x:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#5a7082',font:{family:'Sora',size:10}}},
+        y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#5a7082',font:{family:'Sora',size:10}}}
+      }
+    }
+  });
+}
+
+// ============================================================
+// DONUT CHART
+// ============================================================
+function renderDonut(klik, jual) {
+  const ctx = document.getElementById('donutChart').getContext('2d');
+  if (dChart) dChart.destroy();
+  dChart = new Chart(ctx, {
+    type:'doughnut',
+    data:{
+      datasets:[{data:[klik||1,jual||1],
+        backgroundColor:['#00b87a','#f59e0b'],
+        borderWidth:0,hoverBorderWidth:0}]
+    },
+    options:{
+      cutout:'72%',responsive:true,
+      plugins:{legend:{display:false},tooltip:{
+        backgroundColor:'#111827',bodyColor:'#e2e8f0',borderColor:'rgba(0,184,122,.3)',borderWidth:1}}
+    }
+  });
+}
+
+// ============================================================
+// TOP PRODUCTS
+// ============================================================
+function renderProds(prods) {
+  const sorted = [...prods].sort((a,b)=>(+b.TERJUAL||0)-(+a.TERJUAL||0)).slice(0,10);
+  const c = document.getElementById('topProds');
+  if (!sorted.length) {c.innerHTML='<div class="loader">Tidak ada data produk.</div>';return}
+  c.innerHTML = sorted.map((p,i) => `
+    <div class="prod-card" onclick="goto('products.html?q='+encodeURIComponent('${p.PRODUK||''}'))">
+      <div class="rank-badge">${i+1}</div>
+      <div class="prod-img">
+        ${p.image_url?`<img src="${p.image_url}" alt="${p.PRODUK}" onerror="this.outerHTML='${CAT_EMOJI[p.KATEGORI]||'📦'}'">`:
+          (CAT_EMOJI[p.KATEGORI]||'📦')}
+      </div>
+      <div class="prod-name" title="${p.PRODUK}">${p.PRODUK}</div>
+      <div class="prod-sold">${fmt(p.TERJUAL)} terjual</div>
+    </div>`).join('');
+}
+
+// ============================================================
+// SOCIAL LIST
+// ============================================================
+function renderSoc() {
+  const platforms = ['youtube','facebook','instagram','tiktok','threads','x','shopee'];
+  const c = document.getElementById('socList');
+  c.innerHTML = platforms.map(p => {
+    const cfg = SOC_CFG[p];
+    const d = socAgg[p]||{klik:0,jual:0};
+    return `
+      <div class="soc-row" onclick="showSocDetail('${p}')">
+        <div class="soc-ico" style="background:${cfg.bg};color:${cfg.color}">${cfg.emoji}</div>
+        <div class="soc-name">${p==='x'?'X (Twitter)':p}</div>
+        <div class="soc-clicks">${fmt(d.klik)}</div>
+      </div>`;
+  }).join('');
+}
+
+// ============================================================
+// NOTIFICATIONS — klik sosial media
+// ============================================================
+function buildNotif() {
+  const dot = document.getElementById('notifDot');
+  const body = document.getElementById('notifBody');
+  const platforms = ['youtube','facebook','instagram','tiktok','threads','x','shopee'];
+  const filtered = platforms.filter(p => (socAgg[p]||{}).klik > 0);
+  if (filtered.length) {
+    dot.classList.add('show');
+    body.innerHTML = filtered.map(p => {
+      const cfg = SOC_CFG[p];
+      const d = socAgg[p];
+      return `
+        <div class="notif-row" onclick="closeNotif()">
+          <div class="nico" style="background:${cfg.bg}">${cfg.emoji}</div>
+          <div>
+            <div style="font-weight:700;font-size:12px;margin-bottom:2px;text-transform:capitalize">
+              ${p==='x'?'X (Twitter)':p}
+            </div>
+            <div style="font-size:11px;color:var(--muted)">Total Klik: 
+              <strong style="color:var(--accent)">${fmt(d.klik)}</strong>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+}
+
+function toggleNotif() {
+  const p = document.getElementById('notifPanel');
+  p.classList.toggle('open');
+  if (p.classList.contains('open')) {
+    /* Setelah 3 detik, hapus notifikasi merah */
+    setTimeout(closeNotif, 3000);
+  }
+}
+function closeNotif() {
+  document.getElementById('notifDot').classList.remove('show');
+  document.getElementById('notifPanel').classList.remove('open');
+}
+
+// ============================================================
+// SOCIAL FILTER (sidebar dropdown)
+// ============================================================
+function filterSocial(plat) {
+  document.getElementById('socList').scrollIntoView({behavior:'smooth'});
+  /* Highlight baris yang dipilih */
+  document.querySelectorAll('.soc-row').forEach(r=>{
+    r.style.borderColor = r.innerText.toLowerCase().includes(plat) ? 'var(--accent)' : '';
+  });
+  toast(`Filter: ${plat.toUpperCase()} diterapkan`);
+}
+
+function showSocDetail(plat) {
+  const d = socAgg[plat]||{klik:0,jual:0};
+  const cvr = d.klik > 0 ? ((d.jual/d.klik)*100).toFixed(2) : 0;
+  alert(`📊 ${plat.toUpperCase()}\n\nTotal Klik   : ${fmt(d.klik)}\nPenjualan    : ${fmt(d.jual)}\nCVR          : ${cvr}%`);
+}
+
+// ============================================================
+// SEARCH
+// ============================================================
+function liveSearch(q) {
+  const drop = document.getElementById('searchDrop');
+  if (!q.trim()) {drop.classList.remove('open');return}
+  const res = allProds.filter(p=>(p.PRODUK||'').toLowerCase().includes(q.toLowerCase())).slice(0,6);
+  if (!res.length) {drop.classList.remove('open');return}
+  drop.innerHTML = res.map(p=>`
+    <div class="search-drop-item" onclick="goto('products.html?q='+encodeURIComponent('${p.PRODUK||''}'))">
+      <span>${CAT_EMOJI[p.KATEGORI]||'📦'}</span>
+      <span>${p.PRODUK}</span>
+      <span style="margin-left:auto;font-size:10px;color:var(--muted)">${p.KATEGORI}</span>
+    </div>`).join('');
+  drop.classList.add('open');
+}
+function doSearch(e) {
+  if (e.key === 'Enter') {
+    const q = document.getElementById('searchInput').value.trim();
+    if (q) goto(`products.html?q=${encodeURIComponent(q)}`);
+  }
+}
+
+// ============================================================
+// PERIOD / DAYS
+// ============================================================
+function setPeriod(p, btn) {
+  period = p;
+  document.querySelectorAll('.s-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderWave();
+}
+function setDays(d, btn) {
+  days = d;
+  document.querySelectorAll('.tf-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+// ============================================================
+// SIDEBAR DROPDOWN
+// ============================================================
+function toggleSocDrop(el) {
+  const m = document.getElementById('socMenu');
+  const c = document.getElementById('socChevron');
+  m.classList.toggle('open');
+  c.classList.toggle('open');
+  el.classList.toggle('active');
+}
+
+// ============================================================
+// HELPERS
+// ============================================================
+function fmt(n) {
+  n = +n;
+  if (isNaN(n)) return '—';
+  if (n >= 1e6) return (n/1e6).toFixed(1)+'M';
+  if (n >= 1e3) return (n/1e3).toFixed(1)+'K';
+  return n.toLocaleString('id-ID');
+}
+function set(id, v) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = v;
+}
+function goto(url) { window.location.href = url; }
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2500);
+}
+
+/* Close dropdown & notif on outside click */
+document.addEventListener('click', e => {
+  if (!e.target.closest('.notif-wrap')) {
+    document.getElementById('notifPanel').classList.remove('open');
+  }
+  if (!e.target.closest('.search-wrap')) {
+    document.getElementById('searchDrop').classList.remove('open');
+  }
+});
+
+/* ▶ START */
+init();
+</script>
+</body>
+</html>

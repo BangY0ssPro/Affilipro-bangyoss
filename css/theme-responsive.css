@@ -1,0 +1,207 @@
+/*
+ * css/theme-responsive.css
+ * Tambahkan ke semua 4 HTML dengan:
+ * <link rel="stylesheet" href="css/theme-responsive.css">
+ * atau paste isi file ini ke dalam <style> di setiap HTML
+ * ============================================================
+ */
+
+/* ============================================================
+   1. CSS VARIABLES — Light Mode Override
+   Diterapkan ketika <html data-theme="light">
+   ============================================================ */
+[data-theme="light"] {
+  --bg:        #f0f4f8;
+  --bg2:       #ffffff;
+  --card:      #ffffff;
+  --card2:     #f8fafc;
+  --accent:    #00b87a;
+  --accentDim: rgba(0, 184, 122, 0.10);
+  --accentGlow: 0 0 18px rgba(0, 184, 122, 0.30);
+  --amber:     #d97706;
+  --red:       #dc2626;
+  --text:      #1a2332;
+  --muted:     #64748b;
+  --border:    rgba(0, 0, 0, 0.08);
+}
+
+/* Gradient judul (harus solid di light mode agar tetap terbaca) */
+[data-theme="light"] .page-title,
+[data-theme="light"] .topbar-title {
+  background: linear-gradient(90deg, #1a2332, var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Sidebar light */
+[data-theme="light"] .sidebar,
+[data-theme="light"] .s-logo + * {
+  box-shadow: 2px 0 12px rgba(0,0,0,.06);
+}
+
+/* Card shadow light */
+[data-theme="light"] .stat-card,
+[data-theme="light"] .ccard,
+[data-theme="light"] .raport-card {
+  box-shadow: 0 2px 12px rgba(0,0,0,.07);
+}
+
+/* Input / textarea light */
+[data-theme="light"] input,
+[data-theme="light"] textarea,
+[data-theme="light"] select {
+  color: var(--text);
+}
+
+/* ============================================================
+   2. THEME TOGGLE BUTTON
+   ============================================================ */
+.theme-toggle {
+  width: 34px;
+  height: 34px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--muted);
+  transition: .2s;
+  flex-shrink: 0;
+}
+.theme-toggle:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.theme-toggle svg {
+  width: 15px;
+  height: 15px;
+}
+/* Tampilkan ikon sesuai mode */
+[data-theme="dark"]  .icon-sun  { display: block; }
+[data-theme="dark"]  .icon-moon { display: none;  }
+[data-theme="light"] .icon-sun  { display: none;  }
+[data-theme="light"] .icon-moon { display: block; }
+
+/* ============================================================
+   3. RESPONSIVE — Mobile (<768px)
+   ============================================================ */
+@media (max-width: 767px) {
+
+  /* Sidebar: hanya ikon, auto-hide di mobile */
+  .sidebar {
+    width: 56px !important;
+    overflow: hidden;
+  }
+  .nav-lbl, .logo-txt {
+    display: none !important;
+  }
+  .nav-chevron { display: none !important; }
+  .sub-menu    { display: none !important; }
+
+  /* Sidebar icon-only halaman analytics/produk/raport */
+  .main {
+    margin-left: 56px !important;
+  }
+
+  /* Topbar stack vertikal di HP kecil */
+  .topbar {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+  .search-wrap {
+    order: 3;
+    max-width: 100% !important;
+    width: 100%;
+    flex: none;
+  }
+  .topbar-right {
+    gap: 6px;
+  }
+
+  /* Stats cards: 2 kolom */
+  .stats-row {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px;
+  }
+  .stat-val { font-size: 20px !important; }
+
+  /* Charts: 1 kolom */
+  .charts-row,
+  .charts-grid,
+  .bot-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Content padding lebih kecil */
+  .content { padding: 12px; }
+
+  /* Produk grid: 2 kolom di HP */
+  .prod-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px;
+  }
+
+  /* Raport form */
+  .input-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Analytics tab row */
+  .tab-row { gap: 6px; }
+  .tab-btn { padding: 5px 10px !important; font-size: 11px !important; }
+
+  /* Bottom table scroll horizontal */
+  .bottom-table {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .bottom-table table {
+    min-width: 600px;
+  }
+}
+
+/* ============================================================
+   4. RESPONSIVE — Tablet (768–1023px)
+   ============================================================ */
+@media (min-width: 768px) and (max-width: 1023px) {
+
+  /* Sidebar tetap tampil penuh */
+  .sidebar { width: 200px; }
+  .main    { margin-left: 200px; }
+
+  /* Stats: 2 kolom */
+  .stats-row {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  /* Charts: 1 kolom */
+  .charts-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Produk grid: 3 kolom */
+  .prod-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+/* ============================================================
+   5. RESPONSIVE — Desktop (≥1024px) — default, tidak banyak berubah
+   ============================================================ */
+@media (min-width: 1024px) {
+  .prod-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+/* ============================================================
+   6. PRINT MODE (opsional, untuk Raport)
+   ============================================================ */
+@media print {
+  .sidebar, .back-btn, .theme-toggle, .notif-wrap { display: none !important; }
+  .main { margin-left: 0 !important; }
+  body  { background: #fff !important; color: #000 !important; }
+}

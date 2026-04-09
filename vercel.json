@@ -1,0 +1,28 @@
+{
+  "version": 2,
+  "name": "affilipro-bangyoss",
+  "functions": {
+    "api/sheets.js": { "memory": 512, "maxDuration": 15 },
+    "api/drive.js":  { "memory": 256, "maxDuration": 10 }
+  },
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "headers": {
+        "Access-Control-Allow-Origin":  "*",
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization"
+      }
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ],
+  "env": {
+    "SPREADSHEET_ID":       "@spreadsheet_id",
+    "GOOGLE_CLIENT_EMAIL":  "@google_client_email",
+    "GOOGLE_PRIVATE_KEY":   "@google_private_key",
+    "DRIVE_FOLDER_ID":      "@drive_folder_id"
+  }
+}
