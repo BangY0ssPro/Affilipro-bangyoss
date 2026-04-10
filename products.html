@@ -53,8 +53,11 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);display:flex
 .main{margin-left:56px;flex:1;padding:22px;max-width:calc(100vw - 56px)}
 .page-title{
   font-size:22px;font-weight:800;margin-bottom:18px;
-  background:linear-gradient(90deg,#fff,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;
-}
+  background: linear-gradient(90deg, #fff, var(--accent));
+background-clip: text;              /* standard */
+-webkit-background-clip: text;      /* safari/chrome */
+color: transparent;                /* fallback */
+-webkit-text-fill-color: transparent;}
 
 /* Search bar */
 .search-wrap{position:relative;margin-bottom:20px}

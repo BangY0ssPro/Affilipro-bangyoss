@@ -20,9 +20,9 @@
     }
   ],
   "env": {
-    "SPREADSHEET_ID":       "@spreadsheet_id",
-    "GOOGLE_CLIENT_EMAIL":  "@google_client_email",
-    "GOOGLE_PRIVATE_KEY":   "@google_private_key",
-    "DRIVE_FOLDER_ID":      "@drive_folder_id"
+    "SPREADSHEET_ID":       "1X1dbDPXniV8ycIkQ6bue_PSbFieBAxpRYav1Hg68cPo",
+    "GOOGLE_CLIENT_EMAIL":  "affilisheetintegrated@affilisheetintegrated.iam.gserviceaccount.com",
+    "GOOGLE_PRIVATE_KEY":   "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCee63ltzll8jt8\nYnTSiw8nnSrNQLhj32OcTvrpzNxB/A5bq9pNjsaGA+8eeN4i+rUhONvisMnluKuv\nVhp+Z/ZeuUs533IKj3HKHBOcaqnkgBLxLvqEqCqeW/M9MrgxrlqwrnbPo9AkbjVG\nUYmM7R90AZ9TzhMSeZuiz4HvAHqadBHUZM5pD6dGudj1dVU1cqi34NtTfA8hB3cD\noUcEaX9GcwnfugUFXRoSPs0y/EqYI5ELRdl8rVEsg2vINuNi8GGz5X55txk/ONtO\nHN4/8UcmgLIjfQaRBEqW38a0Emm12wSZZn8cE17bufPIHe+2LStNIv+zZ8Nv5d/4\n19NRBZ6/AgMBAAECggEAScTlHZPLTmZSBSRpH2WmMLjKJw80pRxi5+ulhLWcYsR6\nRHZ6X3aRdukW4Va+g4ayUBwA0gSbfegXVj6ch3FJ7y6N0wrssPizLTIjeL/3g8qP\nxp8o8h269Mp1LuvQbCOtyCb1W9Jy/Lol5yzl+2iWpu9oY+B85TEg3kh7wS22Y/Te\nbdSzslqDmHwNX1xiHMnbuJXymiGb8LR4dfo3hue/H09xjGVEuJ1Fhso9cy1LZI/0\nPaHUR7ItK6WH4SdZYthSxbZrxB7bnjwfS1I3SI3NpbG9pHRlkOSAe04HLXw22KXF\naY/tP3wCuDcYTMjvBu0/2ELIbuZYHMthq9qC2GJuqQKBgQDS/UC9xP8Ckx1tW+qX\nwEoEE6DVR27zme0XaRa6mcFqB50vcTt8aAK97F5tjjxTAk2y28kMi/YAb8+nWl3J\nziEfu9bA2Kg+ggKfZYRdARkYrCZiZcGH3AhybU9EfJz0bok428zNOUcd2TT9L3CX\nNB3UeCPTnK2Hquj2Rc/smWrFaQKBgQDASukfwitWqS7MOJIxPEdMfB9nEdgUDVY9\ndigQongQa2vPUEwlxGEzz8b4HxTHknNYGCYiNeH6FE/w3fQzikNtGmqtvz84Jh4K\nMw+5U5SHQIIWHtoUQ/gV+pt8RmjyeYksd6etawA7Wg6h+0jXZBgeeumbhyKR+oY4\nz/GYBMD15wKBgAbLz40NTmWH1ZfTMSBIOlodQ736+hDwsVlisi+6iidfLWn8zLy6\nIPR7K6N9xGWsGlKbj8NOstLaxyaN252HfTunckht8iVpTKpTu8q/IU7RJL9gpbY5\nmTAOY1JCbU/WS6dANT2bDbZha7qID6lfLWLNp+HGFzTahXyBTSxC2NSZAoGAT/sY\nihAeLJaEE4d4LyhuU37RJPLEGFsPwtKxiXG6VMIJfppcgdzzvTQwAyYSY4wjk8G/\nor0cuALY2UvIdeONdgTl2EzSw8z+86kXYjNEdRk8wmyksocu2h15rLAwmKI6jxdZ\n1ATMfONRcMhvHL/SVGM1ZW5Iz8UPLPQ4/c0EYYMCgYBDPMMSbBIJyLvZZPjbW+bd\nW7JnTah1jL6oJdjNM7KwNEchEV/TvoaCD0+Hvx58aD3IPsE2rSTcRY3AzrHbv/MQ\n+PbYjWGUfGwa4pey21Fcc+JGQKIaGJMMsoH3VDwQL+ycm+KtIze73Okk1YImE0b1\nbJtlFO+poOqTDd1pC+C6Jw==\n-----END PRIVATE KEY-----\n",
+    "DRIVE_FOLDER_ID":      "15z6wzHSBnP43YsjKV9K59Wax-R7zuU3Q"
   }
 }

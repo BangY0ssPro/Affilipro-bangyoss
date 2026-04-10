@@ -26,10 +26,22 @@
 }
 
 /* Gradient judul (harus solid di light mode agar tetap terbaca) */
+/* Light mode title */
 [data-theme="light"] .page-title,
 [data-theme="light"] .topbar-title {
   background: linear-gradient(90deg, #1a2332, var(--accent));
+  background-clip: text;
   -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Global gradient */
+.gradient-text {
+  background: linear-gradient(90deg, #fff, var(--accent));
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
   -webkit-text-fill-color: transparent;
 }
 

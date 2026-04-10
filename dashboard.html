@@ -7,8 +7,8 @@
 <title>AffiliPRO_BANGYOSS – Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script src="js/config.js"></script>
-<script src="js/app.js"></script>
+<script src="js/config.js" defer></script>
+<script src="js/app.js" defer></script>
 <style>
 /* ===================== CSS VARIABLES ===================== */
 :root {
@@ -79,9 +79,21 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);display:flex
   border-bottom:1px solid var(--border);background:var(--bg2);
   position:sticky;top:0;z-index:100;
 }
-.topbar-title{font-size:15px;font-weight:700;flex-shrink:0;
-  background:linear-gradient(90deg,#fff,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.search-wrap{flex:1;max-width:380px;position:relative}
+.topbar-title{
+  font-size:15px;
+  font-weight:700;
+  flex-shrink:0;
+  background: linear-gradient(90deg, #fff, var(--accent));
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+.search-wrap{
+  flex:1;
+  max-width:380px;
+  position:relative;
+}
 .search-inner{
   display:flex;align-items:center;gap:8px;background:var(--card);
   border:1px solid var(--border);border-radius:10px;padding:7px 13px;transition:.2s;
@@ -186,7 +198,10 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);display:flex
 /* Donut panel */
 .donut-wrap{display:flex;align-items:center;gap:14px}
 .donut-cvs{width:110px;height:110px;flex-shrink:0}
-.donut-stats{}
+.donut-stats{
+  display: flex;
+  flex-direction: column;
+}
 .ds-label{font-size:10.5px;color:var(--muted);margin-bottom:3px;margin-top:10px}
 .ds-val{font-size:20px;font-weight:800;line-height:1}
 
