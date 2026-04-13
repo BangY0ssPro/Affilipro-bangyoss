@@ -215,5 +215,5 @@
 @media print {
   .sidebar, .back-btn, .theme-toggle, .notif-wrap { display: none !important; }
   .main { margin-left: 0 !important; }
-  body  { background: #fff !important; color: #000 !important; }
+  body  { background: #fff !important; color: rgba(7,9,15,0.85) !important; }
 }
