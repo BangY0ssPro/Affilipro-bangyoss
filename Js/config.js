@@ -9,7 +9,7 @@ window.AFFILIPRO_CONFIG = {
   // ── PILIH MODE BACKEND ──
   // "appscript" → Apps Script Web App (lebih mudah, tanpa Vercel)
   // "vercel"    → Vercel + Service Account (direkomendasikan untuk produksi)
-  backendMode: "appscript",
+  backendMode: "vercel",
 
   // ── Apps Script Web App URL ──
   // Setelah deploy Apps Script, paste URL-nya di sini
@@ -19,7 +19,7 @@ window.AFFILIPRO_CONFIG = {
   // ── Vercel Proxy Base URL ──
   // Setelah deploy ke Vercel, paste domain-nya di sini
   // Contoh: https://affilipro.vercel.app
-  vercelBase: "PASTE_VERCEL_URL_DISINI",
+  vercelBase: "affilipro-bangyoss.vercel.app",
 
   // ── Google Spreadsheet ID ──
   // Ambil dari URL spreadsheet: docs.google.com/spreadsheets/d/[INI_ID]/edit
