@@ -5,7 +5,7 @@
 // ============================================================
 
 /* ── ID Sheet ── */
-const SS          = SpreadsheetApp.getActiveSpreadsheet();
+const SS          = openById("1X1dbDPXniV8ycIkQ6bue_PSbFieBAxpRYav1Hg68cPo");
 const SH_PRODUCT  = () => SS.getSheetByName("Product");
 const SH_SOC      = () => SS.getSheetByName("SOSIAL KLIK");
 const SH_ANALISA  = () => SS.getSheetByName("ANALISA");
