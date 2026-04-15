@@ -3,27 +3,18 @@
   "version": 2,
   "name": "affilipro-bangyoss",
   "functions": {
-    "api/sheets.js": { "memory": 512, "maxDuration": 15 },
-    "api/drive.js":  { "memory": 256, "maxDuration": 10 }
+    "api/sheets.js": { "maxDuration": 15 },
+    "api/drive.js":  { "maxDuration": 10 }
   },
   "routes": [
     {
       "src": "/api/(.*)",
       "headers": {
-        "Access-Control-Allow-Origin":  "*",
+        "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type, Authorization"
-      }
-    },
-    {
+      },
       "dest": "/api/$1"
     }
-  ],
-  "_comment_env": "⚠️ JANGAN simpan credentials di sini! Set di Vercel Dashboard → Settings → Environment Variables",
-  "_required_env_vars": [
-    "SPREADSHEET_ID",
-    "GOOGLE_CLIENT_EMAIL",
-    "GOOGLE_PRIVATE_KEY",
-    "DRIVE_FOLDER_ID"
   ]
 }
