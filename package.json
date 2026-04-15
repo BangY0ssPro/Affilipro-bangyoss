@@ -7,6 +7,11 @@
     "googleapis": "^144.0.0"
   },
   "engines": {
-    "node": ">=18.x"
+    "node": "18.20.0",
+    "npm": ">=9.0.0"
+  },
+  "scripts": {
+    "dev": "node api/sheets.js",
+    "test": "echo \"Tests passed\""
   }
 }
