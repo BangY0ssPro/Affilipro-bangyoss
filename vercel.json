@@ -18,5 +18,12 @@
       "src": "/(.*)",
       "dest": "/$1"
     }
+  ],
+  "_comment_env": "⚠️ JANGAN simpan credentials di sini! Set di Vercel Dashboard → Settings → Environment Variables",
+  "_required_env_vars": [
+    "SPREADSHEET_ID",
+    "GOOGLE_CLIENT_EMAIL",
+    "GOOGLE_PRIVATE_KEY",
+    "DRIVE_FOLDER_ID"
   ]
 }
