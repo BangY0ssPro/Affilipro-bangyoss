@@ -158,3 +158,6 @@ module.exports = async function handler(req, res) {
     });
   }
 };
+
+// ✅ VERCEL V2 COMPATIBILITY: Export default untuk serverless functions
+module.exports.default = module.exports;

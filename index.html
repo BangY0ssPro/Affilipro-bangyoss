@@ -2,14 +2,25 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<link rel="stylesheet" href="css/theme-responsive.css">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>AffiliPRO_BANGYOSS – Dashboard</title>
+
+<!-- Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<!-- CSS (urutan: base → efek) -->
+<link rel="stylesheet" href="css/theme-responsive.css">
 <link rel="stylesheet" href="css/motion.css">
+
+<!-- Library (harus sebelum app.js) -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<!-- JS (urutan dependency) -->
 <script src="js/config.js" defer></script>
+<script src="js/motion.js" defer></script>
 <script src="js/app.js" defer></script>
+
 <style>
 /* ===================== CSS VARIABLES ===================== */
 :root {
@@ -271,7 +282,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);display:flex
   </div>
   <nav class="nav">
     <!-- 1 Dashboard -->
-    <a href="Dashboard.html" class="nav-item active">
+    <a href="index.html" class="nav-item active">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/>
         <rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>

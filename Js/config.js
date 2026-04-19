@@ -38,7 +38,7 @@ window.AFFILIPRO_CONFIG = {
 
   // ── Google Drive Folder ID untuk gambar produk ──
   // Ambil dari URL folder Drive
-  driveFolderId: "15z6wzHSBnP43YsjKV9K59Wax-R7zuU3Q",
+  driveFolderId: "1cnAQkxA56od9m_IsvyZEh9cFWqED9eue",
 
   // ── Debug Mode (set false di production) ──
   debug: false,

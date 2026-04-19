@@ -3,46 +3,67 @@
   "version": 2,
   "name": "affilipro-bangyoss",
   
-  "functions": {
-    "api/sheets.js": { "maxDuration": 15 },
-    "api/drive.js":  { "maxDuration": 10 }
-  },
+  "buildCommand": "npm install",
+  "outputDirectory": "./",
+  
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "/api/:path*"
+    },
+    {
+      "source": "/(:path*)\\.(js|css|jpg|jpeg|png|gif|ico|svg)$",
+      "destination": "/$1.$2"
+    },
+    {
+      "source": "/(.*\\.html)$",
+      "destination": "/$1"
+    },
+    {
+      "source": "/(?!api|.*\\..*|public).*",
+      "destination": "/index.html"
+    }
+  ],
 
-  "routes": [
+  "headers": [
     {
-      "src": "/api/(.*)",
-      "headers": {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization",
-        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate"
-      },
-      "dest": "/api/$1"
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, no-cache, must-revalidate"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization"
+        }
+      ]
     },
     {
-      "src": "/(.*\\.html)$",
-      "headers": {
-        "Cache-Control": "public, max-age=3600, s-maxage=3600"
-      },
-      "dest": "/$1"
+      "source": "/(.*\\.html)$",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600"
+        }
+      ]
     },
     {
-      "src": "/(.*\\.js)$",
-      "headers": {
-        "Cache-Control": "public, max-age=31536000, immutable"
-      },
-      "dest": "/$1"
-    },
-    {
-      "src": "/(.*\\.css)$",
-      "headers": {
-        "Cache-Control": "public, max-age=31536000, immutable"
-      },
-      "dest": "/$1"
-    },
-    {
-      "src": "/(?!api).*",
-      "dest": "/"
+      "source": "/(.*\\.(js|css))$",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
     }
   ]
 }
