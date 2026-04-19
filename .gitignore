@@ -1,8 +1,45 @@
-node_modules/
+# ============================================================
+# .gitignore — Jangan push files yang sensitive ke GitHub
+# ============================================================
+
+# Environment variables (SANGAT PENTING!)
 .env
 .env.local
 .env.production
-*.json.key
-service-account*.json
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Dependencies
+node_modules/
+npm-debug.log
+yarn-error.log
+pnpm-debug.log
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-*
 .DS_Store
 Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# System files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# Backup files
+*.bak
+*~

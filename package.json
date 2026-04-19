@@ -4,11 +4,11 @@
   "description": "AffiliPRO Dashboard Backend — Google Sheets + Drive Proxy",
   "private": true,
   "dependencies": {
-    "googleapis": "^144.0.0"
+    "googleapis": "^143.0.0"
   },
   "engines": {
-    "node": ">=20",
-    "npm": ">=9.0.0"
+    "node": "20.12.0",
+    "npm": "10.5.0"
   },
   "scripts": {
     "dev": "node api/sheets.js",
