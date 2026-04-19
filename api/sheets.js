@@ -3,7 +3,6 @@
 // Proxy Google Sheets API agar tidak kena CORS dari browser
 // Deploy ke Vercel, URL: https://yourdomain.vercel.app/api/sheets
 // ============================================================
-
 const { google } = require("googleapis");
 
 // ── Konfigurasi dari Environment Variables Vercel ──
