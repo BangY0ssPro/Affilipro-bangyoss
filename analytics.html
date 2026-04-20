@@ -312,6 +312,9 @@ tr:hover td{background:var(--accentDim)}
   </div>
 </div>
 
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+
 <script>
 const API_URL = 'https://script.google.com/macros/s/AKfycbw42wUGkAzjzYal5HR_s4mgeAPuFt0BA8EqLaQJ3fOFmS50SS_RHXs9N2N1OlKblv0jdw/exec';
 
@@ -349,8 +352,12 @@ let curFilter={type:'all',kat:null,prod:null,soc:null};
 async function fetchSheet(name) {
   try {
     const r = await fetch(`${API_URL}?sheet=${encodeURIComponent(name)}`);
-    return await r.json();
-  } catch { return null; }
+    const res = await r.json();
+    return res.data || res;
+  } catch (e) {
+    console.error('Fetch error:', name, e);
+    return null;
+  }
 }
 
 async function init() {
