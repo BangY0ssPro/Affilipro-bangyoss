@@ -568,8 +568,8 @@ async function fetchSheet(name) {
 
 async function init() {
   const [p, s] = await Promise.all([fetchSheet('Product'), fetchSheet('SOSIAL KLIK')]);
-  allProds = p?.data ?? MOCK_PRODUCTS;
-  allSoc   = s?.data ?? MOCK_SOCIAL;
+ allProds = Array.isArray(p?.data) ? p.data : MOCK_PRODUCTS;
+ allSoc   = Array.isArray(s?.data) ? s.data : MOCK_SOCIAL;
   render();
   buildNotif();
 }
