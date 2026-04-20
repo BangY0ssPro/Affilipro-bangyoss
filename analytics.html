@@ -368,15 +368,33 @@ async function init() {
 }
 
 function renderAll() {
-  let fp = prodData, fs = socData;
+  let fp = Array.isArray(prodData) ? prodData : [];
+  let fs = Array.isArray(socData) ? socData : [];
+
   if (curFilter.type === 'kat' && curFilter.kat) {
-    fp = prodData.filter(d => d.KATEGORI && d.KATEGORI.toLowerCase().includes(curFilter.kat.toLowerCase()));
-    if (curFilter.prod) fp = fp.filter(d => d.PRODUK && d.PRODUK.toLowerCase().includes(curFilter.prod.toLowerCase()));
+    fp = fp.filter(d => 
+      (d.KATEGORI || '').toLowerCase().includes(curFilter.kat.toLowerCase())
+    );
+    if (curFilter.prod) {
+      fp = fp.filter(d => 
+        (d.PRODUK || '').toLowerCase().includes(curFilter.prod.toLowerCase())
+      );
+    }
   }
+
   if (curFilter.type === 'soc' && curFilter.soc) {
-    fs = socData.filter(d => (d.PLATFORM||'').toLowerCase() === curFilter.soc);
-    fp = prodData.filter(d => (d.PLATFORM||'').toLowerCase() === curFilter.soc);
+    fp = fp.filter(d => 
+      (d.PLATFORM || '').toLowerCase().trim() === curFilter.soc
+    );
+    fs = fs.filter(d => 
+      (d.PLATFORM || '').toLowerCase().trim() === curFilter.soc
+    );
   }
+
+  console.log('FILTER:', curFilter);
+  console.log('FP:', fp);
+  console.log('FS:', fs);
+
   renderLine(fp);
   renderDonut(fs);
   renderTable(fp, fs);
@@ -462,7 +480,8 @@ function renderTable(fp, fs) {
     const sd = socMap[plat];
     if (!sd) return;
     const cfg = SOC_CFG[plat];
-    const platProds = fp.filter(d => (d.PLATFORM||'').toLowerCase() === plat || curFilter.type === 'all');
+    const platProds = fp.filter(d => 
+  (d.PLATFORM||'').toLowerCase() === plat);
     // Show one row per platform with totals
     const totK = +sd.KLIK||0;
     const totJ = +sd.PENJUALAN||0;
