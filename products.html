@@ -323,15 +323,21 @@ async function init() {
     const r = await fetch(`${API_URL}?sheet=Product`);
     const json = await r.json();
 
-    console.log("DATA API:", json);
+    console.log("API RESULT:", json);
 
-    if (json.ok && Array.isArray(json.data)) {
+    // ✅ HANDLE SEMUA FORMAT API
+    if (Array.isArray(json)) {
+      allProds = json;
+    } else if (Array.isArray(json.data)) {
       allProds = json.data;
+    } else if (Array.isArray(json.result)) {
+      allProds = json.result;
     } else {
-      throw new Error("Format data tidak sesuai (bukan array)");
+      throw new Error("Format API tidak dikenali");
     }
+
     console.log("ALL PRODS:", allProds);
-    
+
   } catch (err) {
     console.error(err);
     errorBox.style.display = 'block';
@@ -366,14 +372,15 @@ function buildCatNav() {
   
   // All button
   mainRow.innerHTML = `<button class="cat-btn active" onclick="selectKat(null,this)">🌐 Semua</button>`;
+   
   cats.forEach(kat => {
     const btn = document.createElement('button');
     btn.className = 'cat-btn';
-    btn.textContent = `${CAT_EMOJI[kat]||'📦'} ${kat}`;
+    btn.textContent = kat;
     btn.onclick = () => selectKat(kat, btn);
     mainRow.appendChild(btn);
   });
-}
+} // 
 
 function selectKat(kat, btn) {
   curKat = kat; curSub = null; curPage = 1;
