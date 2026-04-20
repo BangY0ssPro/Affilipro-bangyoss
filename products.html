@@ -319,45 +319,35 @@ async function init() {
   loading.style.display = 'block';
   errorBox.style.display = 'none';
 
-  const url = new URL(window.location.href);
-  const q = url.searchParams.get('q') || '';
-
   try {
-    const r = await fetch(`${API_URL}?sheet=Product`);
-    const json = await r.json();
+    const res = await fetch(`${API_URL}?sheet=Product`);
 
-    console.log("API RESULT:", json);
+    if (!res.ok) throw new Error("HTTP error " + res.status);
 
-    // ✅ HANDLE SEMUA FORMAT API
-    if (Array.isArray(json)) {
-      allProds = json;
-    } else if (Array.isArray(json.data)) {
+    const json = await res.json();
+
+    console.log("API:", json);
+
+    // 🔥 handle format kamu sekarang
+    if (json.ok && Array.isArray(json.data)) {
       allProds = json.data;
-    } else if (Array.isArray(json.result)) {
-      allProds = json.result;
     } else {
-      throw new Error("Format API tidak dikenali");
+      throw new Error("Format API tidak sesuai");
     }
-
-    console.log("ALL PRODS:", allProds);
 
   } catch (err) {
     console.error(err);
+
     errorBox.style.display = 'block';
-    errorBox.textContent = '❌ Gagal load data dari spreadsheet';
+    errorBox.textContent = '❌ Gagal load API, pakai data lokal';
+
     allProds = MOCK;
   }
 
   loading.style.display = 'none';
 
   buildCatNav();
-
-  if (q) {
-    document.getElementById('searchInput').value = q;
-    onSearch();
-  } else {
-    applyFilter();
-  }
+  applyFilter();
 }
 
 // ===== CATEGORY NAV =====
