@@ -13,7 +13,7 @@
     },
     {
       "source": "/([^\\.]+)",
-      "destination": "/$1.html"
+      "destination": "/dashboard.html"
     }
   ],
 
