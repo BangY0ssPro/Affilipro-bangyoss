@@ -2,21 +2,21 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
   "name": "affilipro-bangyoss",
-  
+
   "buildCommand": "npm install",
   "outputDirectory": "./",
-  
+
   "rewrites": [
     {
       "source": "/api/:path*",
       "destination": "/api/:path*"
     },
     {
-      "source": "/(:path*)\\.(js|css|jpg|jpeg|png|gif|ico|svg)$",
+      "source": "/(:path*)\\.(js|css|jpg|jpeg|png|gif|ico|svg)",
       "destination": "/$1.$2"
     },
     {
-      "source": "/(.*\\.html)$",
+      "source": "/(.*\\.html)",
       "destination": "/$1"
     },
     {
@@ -48,7 +48,7 @@
       ]
     },
     {
-      "source": "/(.*\\.html)$",
+      "source": "/(.*\\.html)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -57,7 +57,7 @@
       ]
     },
     {
-      "source": "/(.*\\.(js|css))$",
+      "source": "/(.*\\.(js|css))",
       "headers": [
         {
           "key": "Cache-Control",
