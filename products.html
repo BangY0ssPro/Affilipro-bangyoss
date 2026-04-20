@@ -165,6 +165,23 @@ color: transparent;                /* fallback */
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--card2);border-radius:3px}
+
+.loading {
+  padding: 30px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.error-message {
+  background: rgba(239,68,68,0.1);
+  border: 1px solid rgba(239,68,68,0.3);
+  color: #fca5a5;
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  font-size: 12px;
+}
 </style>
 </head>
 <body>
@@ -230,7 +247,17 @@ color: transparent;                /* fallback */
   </div>
 
   <!-- Grid -->
-  <div class="prod-grid" id="prodGrid"></div>
+  <div id="loadingProducts" class="loading" style="display:none">
+  ⏳ Memuat produk...
+</div>
+
+<div id="errorMessage" class="error-message" style="display:none"></div>
+
+<div class="prod-grid" id="prodGrid"></div>
+
+<div id="emptyState" class="empty" style="display:none">
+  <span>📭</span> Produk tidak tersedia
+</div>
 
   <!-- Pagination -->
   <div class="pagination" id="pagination"></div>
@@ -283,22 +310,36 @@ let allProds = [], filteredProds = [], curPage = 1;
 let curKat = null, curSub = null;
 
 async function init() {
+  const loading = document.getElementById('loadingProducts');
+  const errorBox = document.getElementById('errorMessage');
+
+  loading.style.display = 'block';
+  errorBox.style.display = 'none';
+
   const url = new URL(window.location.href);
   const q = url.searchParams.get('q') || '';
 
   try {
-  const r = await fetch(`${API_URL}?sheet=Product`);
-  const json = await r.json();
+    const r = await fetch(`${API_URL}?sheet=Product`);
+    const json = await r.json();
 
-  if (json.ok && Array.isArray(json.data)) {
-    allProds = json.data;
-  } else {
+    console.log("DATA API:", json);
+
+    if (json.ok && Array.isArray(json.data)) {
+      allProds = json.data;
+    } else {
+      throw new Error("Format data tidak sesuai (bukan array)");
+    }
+    console.log("ALL PRODS:", allProds);
+    
+  } catch (err) {
+    console.error(err);
+    errorBox.style.display = 'block';
+    errorBox.textContent = '❌ Gagal load data dari spreadsheet';
     allProds = MOCK;
   }
 
-} catch {
-  allProds = MOCK;
-}
+  loading.style.display = 'none';
 
   buildCatNav();
 
@@ -312,7 +353,15 @@ async function init() {
 
 // ===== CATEGORY NAV =====
 function buildCatNav() {
-  const cats = [...new Set(allProds.map(p=>p.KATEGORI||'').filter(Boolean))];
+  if (!Array.isArray(allProds)) {
+    console.error("allProds bukan array:", allProds);
+    return;
+  }
+
+  const cats = [...new Set(
+    allProds.map(p => p.KATEGORI || '').filter(Boolean)
+  )];
+
   const mainRow = document.getElementById('catMain');
   
   // All button
@@ -385,10 +434,13 @@ function renderPage() {
   const page  = filteredProds.slice(start, start + PER_PAGE);
   const grid  = document.getElementById('prodGrid');
 
-  if (!page.length) {
-    grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><span>🔍</span>Produk tidak ditemukan.</div>`;
-    return;
-  }
+ if (!page.length) {
+  document.getElementById('emptyState').style.display = 'block';
+  grid.innerHTML = '';
+  return;
+}
+
+document.getElementById('emptyState').style.display = 'none';
 
   const stars = n => {
     const r = Math.min(5, Math.max(0, Math.round(+n/n*4+1)));
@@ -442,7 +494,7 @@ function goPage(p) {
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-init();
+init()
 </script>
 </body>
 </html>
