@@ -287,9 +287,18 @@ async function init() {
   const q = url.searchParams.get('q') || '';
 
   try {
-    const r = await fetch(`${API_URL}?sheet=Product`);
-    allProds = await r.json();
-  } catch { allProds = MOCK; }
+  const r = await fetch(`${API_URL}?sheet=Product`);
+  const json = await r.json();
+
+  if (json.ok && Array.isArray(json.data)) {
+    allProds = json.data;
+  } else {
+    allProds = MOCK;
+  }
+
+} catch {
+  allProds = MOCK;
+}
 
   buildCatNav();
 

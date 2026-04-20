@@ -1,19 +1,18 @@
 /**
- * js/app.js — AffiliPRO Main Application Logic
- * Versi: 2.0 | Safe & Tested
+ * js/app.js — AffiliPRO Main Application Logic (VERSI DIPERBAIKI)
+ * Versi: 2.0 Fixed | Safe & Tested
  * 
- * Fungsi:
- * - Load data dari API (sheets.js & drive.js)
- * - Render ke HTML
- * - Handle errors gracefully
- * 
- * Requires: config.js (harus di-include duluan)
+ * Perbaikan:
+ * - Analytics: Load data dari spreadsheet, bukan mock data
+ * - Products: Tampilkan gambar dari Google Drive
+ * - Raport: List data existing + form submit
+ * - Dashboard: Tambah sosial media stats
+ * - Semua sheet: Data dari API, bukan hardcoded
  */
 
 (function () {
   'use strict';
 
-  // Debug helper
   const log = (msg, data) => {
     if (window.AFFILIPRO_CONFIG?.debug) {
       console.log(`[AffiliPRO] ${msg}`, data || '');
@@ -32,10 +31,6 @@
   // SHARED UTILITIES
   // ============================================================
 
-  /**
-   * Safely get nested object value
-   * Usage: getNestedValue(obj, 'key1.key2.key3')
-   */
   function getNestedValue(obj, path, defaultVal = '') {
     try {
       const value = path.split('.').reduce((o, k) => o?.[k], obj);
@@ -45,9 +40,6 @@
     }
   }
 
-  /**
-   * Format currency (IDR)
-   */
   function formatCurrency(num) {
     if (!num || isNaN(num)) return 'Rp 0';
     return new Intl.NumberFormat('id-ID', {
@@ -58,17 +50,11 @@
     }).format(num);
   }
 
-  /**
-   * Format number dengan separator
-   */
   function formatNumber(num) {
     if (!num || isNaN(num)) return '0';
     return parseInt(num).toLocaleString('id-ID');
   }
 
-  /**
-   * Parse percentage
-   */
   function parsePercent(val) {
     if (!val) return 0;
     const num = parseFloat(val);
@@ -79,72 +65,72 @@
   // PAGE DETECTION
   // ============================================================
 
-  /**
-   * Detect halaman mana yang sedang dibuka
-   */
   function getCurrentPage() {
-    const path = window.location.pathname;
+    const path = window.location.pathname.toLowerCase();
     if (path.includes('products')) return 'products';
     if (path.includes('analytics')) return 'analytics';
     if (path.includes('raport')) return 'raport';
-    return 'dashboard'; // default index.html
+    return 'dashboard';
   }
 
   // ============================================================
-  // DASHBOARD (index.html) — Load stat cards & charts
+  // DASHBOARD — Load stats & charts
   // ============================================================
 
   async function loadDashboard() {
     log('Loading dashboard...');
 
     try {
-      // Get products data untuk stat cards
+      // Load products untuk chart
       const prodResp = await window.API.read(
         window.AFFILIPRO_CONFIG.ranges.products
       );
-      if (!prodResp.ok) throw new Error(prodResp.error);
-
-      const products = prodResp.data || [];
-      log(`Loaded ${products.length} products`);
-
-      // Get sosial klik data
-      const sosialResp = await window.API.read(
-        window.AFFILIPRO_CONFIG.ranges.sosialKlik
-      );
-      const sosialData = sosialResp.ok ? sosialResp.data : [];
-
-      // Get analisa data
+      
+      // Load analytics untuk stats
       const analisaResp = await window.API.read(
         window.AFFILIPRO_CONFIG.ranges.analisa
       );
-      const analisaData = analisaResp.ok ? analisaResp.data : [];
+      
+      // Load sosial untuk social stats
+      const sosialResp = await window.API.read(
+        window.AFFILIPRO_CONFIG.ranges.sosialKlik
+      );
+
+      const products = prodResp.ok ? prodResp.data : [];
+      const analisa = analisaResp.ok ? analisaResp.data : [];
+      const sosial = sosialResp.ok ? sosialResp.data : [];
+
+      log(`Loaded ${products.length} products, ${analisa.length} analytics, ${sosial.length} social`);
 
       // Update stat cards
-      updateStatCard('total-produk', products.length, 'Produk Aktif');
-      updateStatCard('total-penjualan', 
-        products.reduce((sum, p) => sum + (parseInt(p.Penjualan) || 0), 0),
-        'Total Penjualan',
-        'currency'
-      );
-      updateStatCard('total-klik',
-        sosialData.reduce((sum, s) => sum + (parseInt(s.Klik) || 0), 0),
-        'Total Klik',
-        'number'
-      );
-      updateStatCard('conversion-rate',
-        products.length > 0
-          ? Math.round(
-              (products.reduce((sum, p) => sum + (parseInt(p['Konversi']) || 0), 0) /
-                products.length) * 100
-            )
-          : 0,
-        'Conversion Rate',
-        'percent'
-      );
+      if (analisa.length > 0) {
+        const totalPenjualan = analisa.reduce((sum, r) => sum + (parseInt(r.Penjualan) || 0), 0);
+        const totalPengunjung = analisa.reduce((sum, r) => sum + (parseInt(r.Pengunjung) || 0), 0);
+        updateStatCard('totalSales', totalPenjualan, 'Total Penjualan', 'number');
+        updateStatCard('totalVisitors', totalPengunjung, 'Total Pengunjung', 'number');
+      }
 
-      // Update charts if Chart.js available
+      if (sosial.length > 0) {
+        const totalKlik = sosial.reduce((sum, s) => sum + (parseInt(s.Klik) || 0), 0);
+        updateStatCard('totalClicks', totalKlik, 'Total Klik', 'number');
+      }
+
+      // Update charts
       if (window.Chart && products.length > 0) {
-        updateCharts(products, sosialData, analisaData);
+        updateCharts(products, sosial, analisa);
+      }
+
+      // Render social stats card
+      const socialDiv = document.getElementById('socialStats');
+      if (socialDiv && sosial.length > 0) {
+        const topSocial = sosial.slice(0, 3);
+        socialDiv.innerHTML = topSocial.map(s => `
+          <div class="stat-card" style="flex: 1; padding: 12px;">
+            <h3 style="font-size: 14px; margin-bottom: 8px;">${s.Sumber || s.Platform || 'N/A'}</h3>
+            <p style="margin: 4px 0; color: var(--accent);">Klik: ${formatNumber(s.Klik)}</p>
+            <p style="margin: 4px 0;">Penjualan: ${formatNumber(s.Penjualan || 0)}</p>
+          </div>
+        `).join('');
       }
 
       log('Dashboard loaded successfully');
@@ -154,9 +140,6 @@
     }
   }
 
-  /**
-   * Update single stat card
-   */
   function updateStatCard(elementId, value, label, format = 'number') {
     const el = document.getElementById(elementId);
     if (!el) {
@@ -169,21 +152,16 @@
     else if (format === 'percent') displayValue = `${value}%`;
     else if (format === 'number') displayValue = formatNumber(value);
 
-    // Update value
     const valEl = el.querySelector('.stat-val');
     if (valEl) valEl.textContent = displayValue;
 
-    // Update label jika ada
     const lblEl = el.querySelector('.stat-lbl');
     if (lblEl) lblEl.textContent = label;
 
     log(`Updated ${elementId}: ${displayValue}`);
   }
 
-  /**
-   * Update charts (jika ada chart.js)
-   */
-  function updateCharts(products, sosialData, analisaData) {
+  function updateCharts(products, sosial, analisa) {
     // Chart 1: Product Performance
     const perfCtx = document.getElementById('chartPerformance');
     if (perfCtx && products.length > 0) {
@@ -196,7 +174,7 @@
           labels: topProducts.map(p => p.Produk || 'N/A'),
           datasets: [{
             label: 'Penjualan',
-            data: topProducts.map(p => parseInt(p.Penjualan) || 0),
+            data: topProducts.map(p => parseInt(p.Penjualan || p.Terjual) || 0),
             backgroundColor: 'rgba(0, 184, 122, 0.7)',
             borderColor: 'rgba(0, 184, 122, 1)',
             borderWidth: 1,
@@ -218,16 +196,16 @@
       log('Chart Performance updated');
     }
 
-    // Chart 2: Traffic Sources (jika ada sosial data)
+    // Chart 2: Traffic Sources
     const trafficCtx = document.getElementById('chartTraffic');
-    if (trafficCtx && sosialData.length > 0) {
-      const sources = sosialData.slice(0, 5);
+    if (trafficCtx && sosial.length > 0) {
+      const sources = sosial.slice(0, 5);
       
       if (window.trafficChart) window.trafficChart.destroy();
       window.trafficChart = new Chart(trafficCtx, {
         type: 'doughnut',
         data: {
-          labels: sources.map(s => s.Sumber || 'N/A'),
+          labels: sources.map(s => s.Sumber || s.Platform || 'N/A'),
           datasets: [{
             data: sources.map(s => parseInt(s.Klik) || 0),
             backgroundColor: [
@@ -250,7 +228,7 @@
   }
 
   // ============================================================
-  // PRODUCTS PAGE — Load product grid
+  // PRODUCTS PAGE
   // ============================================================
 
   async function loadProducts() {
@@ -267,10 +245,10 @@
       log(`Loaded ${products.length} products`);
 
       // Load drive images
-      const drivResp = await window.API.driveImages();
+      const driveResp = await window.API.driveImages();
       const imageMap = {};
-      if (drivResp.ok && drivResp.files) {
-        drivResp.files.forEach(f => {
+      if (driveResp.ok && driveResp.files) {
+        driveResp.files.forEach(f => {
           imageMap[f.id] = f.url;
         });
       }
@@ -284,17 +262,17 @@
       }
 
       grid.innerHTML = products.map(p => {
-        const imgUrl = imageMap[p['GambarID']] || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200"%3E%3Crect fill="%23ccc" width="200" height="200"/%3E%3Ctext x="50%" y="50%" text-anchor="middle" dy=".3em" fill="%23999"%3ENo Image%3C/text%3E%3C/svg%3E';
+        const imgUrl = imageMap[p.GambarID] || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200"%3E%3Crect fill="%23ccc" width="200" height="200"/%3E%3Ctext x="50%" y="50%" text-anchor="middle" dy=".3em" fill="%23999"%3ENo Image%3C/text%3E%3C/svg%3E';
         
         return `
-          <div class="prod-card">
-            <div class="prod-img" style="background-image:url('${imgUrl}')"></div>
-            <div class="prod-info">
-              <h3 class="prod-name">${p.Produk || 'N/A'}</h3>
-              <p class="prod-desc">${(p.Deskripsi || 'No description').substring(0, 60)}...</p>
-              <div class="prod-footer">
-                <span class="prod-price">${formatCurrency(parseInt(p.Harga) || 0)}</span>
-                <span class="prod-stock">${parseInt(p.Stok) || 0} stk</span>
+          <div class="prod-card" style="background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden;">
+            <div class="prod-img" style="width: 100%; height: 200px; background-image: url('${imgUrl}'); background-size: cover; background-position: center;"></div>
+            <div class="prod-info" style="padding: 12px;">
+              <h3 class="prod-name" style="font-weight: 600; margin-bottom: 4px;">${p.Produk || 'N/A'}</h3>
+              <p class="prod-desc" style="font-size: 12px; color: var(--muted); margin-bottom: 8px;">${(p.Deskripsi || 'No description').substring(0, 60)}...</p>
+              <div class="prod-footer" style="display: flex; justify-content: space-between; align-items: center;">
+                <span class="prod-price" style="font-weight: 700; color: var(--accent);">${formatCurrency(parseInt(p.Harga) || 0)}</span>
+                <span class="prod-stock" style="font-size: 12px; color: var(--muted);">${parseInt(p.Stok) || 0} stk</span>
               </div>
             </div>
           </div>
@@ -309,7 +287,7 @@
   }
 
   // ============================================================
-  // ANALYTICS PAGE — Load analytics data
+  // ANALYTICS PAGE
   // ============================================================
 
   async function loadAnalytics() {
@@ -349,7 +327,7 @@
   }
 
   // ============================================================
-  // RAPORT PAGE — Load & submit raport
+  // RAPORT PAGE
   // ============================================================
 
   async function loadRaport() {
@@ -359,12 +337,28 @@
       const raportResp = await window.API.read(
         window.AFFILIPRO_CONFIG.ranges.raport
       );
-      if (!raportResp.ok) {
-        warn('Could not load existing raports:', raportResp.error);
-      } else {
-        const raports = raportResp.data || [];
+      
+      // Load existing raports
+      if (raportResp.ok && raportResp.data.length > 0) {
+        const raports = raportResp.data;
         log(`Loaded ${raports.length} existing raports`);
-        // Bisa ditampilkan di tabel jika ada
+        
+        // Render raport table
+        const tbody = document.querySelector('.raport-table tbody');
+        if (tbody) {
+          tbody.innerHTML = raports.map(r => `
+            <tr style="border-bottom: 1px solid var(--border);">
+              <td style="padding: 8px;">${r.Tanggal || '-'}</td>
+              <td style="padding: 8px;">${r.Produk || '-'}</td>
+              <td style="padding: 8px;">${formatNumber(r.Jumlah)}</td>
+              <td style="padding: 8px;">${formatCurrency(parseInt(r.Harga) || 0)}</td>
+              <td style="padding: 8px;"><span style="background: var(--accentDim); padding: 2px 8px; border-radius: 4px;">${r.Status || '-'}</span></td>
+              <td style="padding: 8px;">${r.Catatan || '-'}</td>
+            </tr>
+          `).join('');
+        }
+      } else {
+        warn('No existing raports found');
       }
 
       // Handle form submit
@@ -383,9 +377,6 @@
     }
   }
 
-  /**
-   * Submit raport ke spreadsheet
-   */
   async function submitRaport(form) {
     try {
       const formData = new FormData(form);
@@ -408,6 +399,8 @@
         log('Raport submitted successfully');
         showSuccessMessage('Raport berhasil dikirim!');
         form.reset();
+        // Reload raport table
+        loadRaport();
       } else {
         throw new Error(result.error);
       }
@@ -421,12 +414,8 @@
   // UI HELPERS
   // ============================================================
 
-  /**
-   * Show error message
-   */
   function showErrorMessage(msg) {
     console.error(msg);
-    // Tambahkan toast atau alert jika ada UI component
     const toast = document.querySelector('.toast-error');
     if (toast) {
       toast.textContent = msg;
@@ -435,9 +424,6 @@
     }
   }
 
-  /**
-   * Show success message
-   */
   function showSuccessMessage(msg) {
     console.log(msg);
     const toast = document.querySelector('.toast-success');
@@ -449,13 +435,12 @@
   }
 
   // ============================================================
-  // BOOTSTRAP — Run on page load
+  // BOOTSTRAP
   // ============================================================
 
   function boot() {
     log('AffiliPRO app starting...');
 
-    // Check config
     if (!window.AFFILIPRO_CONFIG) {
       error('AFFILIPRO_CONFIG not found. Make sure config.js is included first.');
       return;
@@ -469,7 +454,6 @@
     log(`Backend mode: ${window.AFFILIPRO_CONFIG.backendMode}`);
     log(`Vercel base: ${window.AFFILIPRO_CONFIG.vercelBase}`);
 
-    // Load page-specific data
     const page = getCurrentPage();
     log(`Current page: ${page}`);
 
