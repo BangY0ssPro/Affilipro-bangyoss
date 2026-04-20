@@ -12,22 +12,18 @@
       "destination": "/api/:path*"
     },
     {
-      "source": "/(:path*)\\.(js|css|jpg|jpeg|png|gif|ico|svg)",
-      "destination": "/$1.$2"
+      "source": "/:path*.html",
+      "destination": "/:path*.html"
     },
     {
-      "source": "/(.*\\.html)",
-      "destination": "/$1"
-    },
-    {
-      "source": "/(?!api|.*\\..*|public).*",
+      "source": "/:path*",
       "destination": "/index.html"
     }
   ],
 
   "headers": [
     {
-      "source": "/api/(.*)",
+      "source": "/api/:path*",
       "headers": [
         {
           "key": "Cache-Control",
@@ -48,7 +44,7 @@
       ]
     },
     {
-      "source": "/(.*\\.html)",
+      "source": "/:path*.html",
       "headers": [
         {
           "key": "Cache-Control",
@@ -57,7 +53,16 @@
       ]
     },
     {
-      "source": "/(.*\\.(js|css))",
+      "source": "/:path*.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/:path*.css",
       "headers": [
         {
           "key": "Cache-Control",
