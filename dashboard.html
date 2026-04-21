@@ -700,19 +700,54 @@ function renderDonut(klik, jual) {
 // TOP PRODUCTS
 // ============================================================
 function renderProds(prods) {
-  const sorted = [...prods].sort((a,b)=>(+b.TERJUAL||0)-(+a.TERJUAL||0)).slice(0,10);
+  const sorted = [...prods]
+    .sort((a, b) => (+b.TERJUAL || 0) - (+a.TERJUAL || 0))
+    .slice(0, 10);
+
   const c = document.getElementById('topProds');
-  if (!sorted.length) {c.innerHTML='<div class="loader">Tidak ada data produk.</div>';return}
-  c.innerHTML = sorted.map((p,i) => `
-    <div class="prod-card" onclick="goto('products.html?q='+encodeURIComponent('${p.PRODUK||''}'))">
-      <div class="rank-badge">${i+1}</div>
-      <div class="prod-img">
-        ${p.image_url?`<img src="${p.image_url}" alt="${p.PRODUK}" onerror="this.outerHTML='${CAT_EMOJI[p.KATEGORI]||'📦'}'">`:
-          (CAT_EMOJI[p.KATEGORI]||'📦')}
+
+  if (!sorted.length) {
+    c.innerHTML = '<div class="loader">Tidak ada data produk.</div>';
+    return;
+  }
+
+  // helper validasi URL
+  const isValidUrl = (url) => {
+    return typeof url === 'string' && url.startsWith('http');
+  };
+
+  // helper escape text biar aman
+  const esc = (str) => String(str || '').replace(/"/g, '&quot;');
+
+  c.innerHTML = sorted.map((p, i) => {
+    const emoji = CAT_EMOJI[p.KATEGORI] || '📦';
+
+    let imgHTML;
+
+    if (isValidUrl(p.image_url)) {
+      imgHTML = `
+        <img 
+          src="${p.image_url}" 
+          alt="${esc(p.PRODUK)}"
+          loading="lazy"
+          onerror="this.onerror=null; this.replaceWith(document.createTextNode('${emoji}'))"
+        >
+      `;
+    } else {
+      imgHTML = emoji;
+    }
+
+    return `
+      <div class="prod-card" onclick="goto('products.html?q='+encodeURIComponent('${esc(p.PRODUK)}'))">
+        <div class="rank-badge">${i + 1}</div>
+        <div class="prod-img">
+          ${imgHTML}
+        </div>
+        <div class="prod-name" title="${esc(p.PRODUK)}">${esc(p.PRODUK)}</div>
+        <div class="prod-sold">${fmt(p.TERJUAL)} terjual</div>
       </div>
-      <div class="prod-name" title="${p.PRODUK}">${p.PRODUK}</div>
-      <div class="prod-sold">${fmt(p.TERJUAL)} terjual</div>
-    </div>`).join('');
+    `;
+  }).join('');
 }
 
 // ============================================================
